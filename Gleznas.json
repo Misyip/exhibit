@@ -94,5 +94,29 @@
     "title": "A Face in a Blue Light",
     "artist": "Unknown",
     "description": "Commodi et et error commodi cupiditate et iusto officia."
+  },
+  {
+    "name": "S2G4W",
+    "width": 3.5,
+    "height": 2.5,
+    "wallId": "west",
+    "relativeOffset": 0,
+    "heightY": 6.8,
+    "imageUrl": "https://i.postimg.cc/Vs4hmWjw/a-white-lines-on-a-black-background.jpg",
+    "title": "White Lines",
+    "artist": "Unknown",
+    "description": "White."
+  },
+  {
+    "name": "S2G5E",
+    "width": 3.5,
+    "height": 2.5,
+    "wallId": "east",
+    "relativeOffset": 0,
+    "heightY": 6.8,
+    "imageUrl": "https://i.postimg.cc/MTqs8nH8/a-street-lights-and-buildings-at-night.png",
+    "title": "Street Lights",
+    "artist": "Unknown",
+    "description": "Night."
   }
 ]
