@@ -34,5 +34,17 @@
     "title": "Dui Xiang De OC Mo Yu",
     "artist": "Juu",
     "description": "A quick brown fox jumped over the lazy dogs."
+  },
+  {
+    "name": "art4",
+    "width": 3.5,
+    "height": 2.5,
+    "wallId": "north",
+    "relativeOffset": 0.25,
+    "heightY": 4.4,
+    "imageUrl": "https://i.postimg.cc/3Rm3zDP6/a-face-in-a-blue-light.jpg",
+    "title": "A Face in a Blue Light",
+    "artist": "Unknown",
+    "description": "Commodi et et error commodi cupiditate et iusto officia."
   }
 ]
