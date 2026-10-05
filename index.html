@@ -120,6 +120,7 @@
         const surfaceMaterials = {};
         let groundMesh = null;
         let ceilingMesh = null;
+        let roofMesh = null;
         let courtyardGroup = null;
         let updateLayout = null;
         let camera = null;
@@ -129,9 +130,11 @@
             depth: 14,
             wallThickness: 0.5,
             wallHeight: 9.0,
+            roofHeight: 4.0, // Height of the triangle peak above the walls
             colors: {
                 floor: "#575757",   
                 ceiling: "#ffffff",
+                roof: "#9e3434",     // Vibrant red roof color
                 north: "#9e3434",
                 south: "#d0e4f7",   
                 east: "#9e3434",
@@ -168,35 +171,24 @@
             console.log("DEBUG: loadArtworksFromDatabase() called.");
             try {
                 const url = 'https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Gleznas.json';
-                console.log("DEBUG: Fetching from URL:", url);
-                
                 const response = await fetch(url);
-                console.log("DEBUG: Response received. Status:", response.status);
-
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 const artworksData = await response.json();
-                console.log("DEBUG: JSON parsed successfully. Item count:", artworksData.length);
-
                 artworksData.forEach(data => {
-                    // Create plane mesh for the artwork
                     const art = BABYLON.MeshBuilder.CreatePlane(data.name, {
                         width: data.width, 
                         height: data.height
                     }, scene);
                     
-                    // Apply texture material
                     const artMat = new BABYLON.StandardMaterial(data.name + "Mat", scene);
                     artMat.diffuseTexture = new BABYLON.Texture(data.imageUrl, scene);
                     artMat.emissiveColor = new BABYLON.Color3(0.1, 0.1, 0.1);
-
                     artMat.backFaceCulling = false;
-                    
                     art.material = artMat;
 
-                    // Store artwork metadata for UI popups and placement positioning
                     art.metadata = {
                         title: data.title,
                         artist: data.artist,
@@ -210,13 +202,9 @@
                     interactiveArtworks.push(art);
                 });
 
-                // Snap artworks into position against the respective gallery walls
                 if (typeof updateLayout === "function") {
                     updateLayout();
                 }
-
-                console.log("Artworks successfully loaded and bound from database. Total interactive items:", interactiveArtworks.length);
-
             } catch (error) {
                 console.error("Failed to load artworks from database:", error);
             }
@@ -253,7 +241,6 @@
                 ]
             );
             skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-            
             skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
             skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
             skybox.material = skyboxMaterial;
@@ -317,6 +304,42 @@
             ceilingMesh.material = ceilingMat;
             surfaceMaterials.ceiling = ceilingMat;
 
+            // SYMMETRICAL CENTERED TRIANGLE ROOF PROFILE matching North Wall color with emissive bottom fix
+            const createRoof = () => {
+                const hw = roomConfig.width / 2;
+                const hd = roomConfig.depth / 2;
+                const overhang = 0;
+
+                const shape = [
+                    new BABYLON.Vector3(-hw - overhang, 0, 0),
+                    new BABYLON.Vector3(0, roomConfig.roofHeight, 0),
+                    new BABYLON.Vector3(hw + overhang, 0, 0)
+                ];
+
+                const path = [
+                    new BABYLON.Vector3(0, 0, -hd - overhang),
+                    new BABYLON.Vector3(0, 0, hd + overhang)
+                ];
+
+                roofMesh = BABYLON.MeshBuilder.ExtrudeShape("roof", {
+                    shape: shape,
+                    path: path,
+                    cap: BABYLON.Mesh.CAP_ALL,
+                    updatable: true
+                }, scene);
+
+                const roofMat = new BABYLON.StandardMaterial("roofMat", scene);
+                const baseColor = BABYLON.Color3.FromHexString(roomConfig.colors.north);
+                roofMat.diffuseColor = baseColor;
+                roofMat.emissiveColor = baseColor.scale(0.5); // Adds self-illumination to prevent bottom caps from appearing completely black in shadows
+                roofMat.specularColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                roofMat.backFaceCulling = true; 
+                roofMesh.material = roofMat;
+                surfaceMaterials.roof = roofMat;
+            };
+
+            createRoof();
+
             // INTERMEDIATE FLOOR DIVIDER & MIDFLOOR RAILING
             const midFloorMat = new BABYLON.StandardMaterial("midFloorMat", scene);
             midFloorMat.diffuseColor = BABYLON.Color3.FromHexString("#575757");
@@ -364,6 +387,13 @@
             midFloorConnectorRail.material = stairWallMat;
             midFloorConnectorRail.checkCollisions = true;
             midFloorConnectorRail.parent = midFloorGroup;
+			
+			const StaircaseBack = BABYLON.MeshBuilder.CreateBox("StaircaseBack", {width: 2.2, height: 4.7, depth: 0.15}, scene);
+            StaircaseBack.position.set(-16.07, 1.03 + 1.1, -5.4);
+            StaircaseBack.rotation.y = Math.PI / 2;
+            StaircaseBack.material = stairWallMat;
+            StaircaseBack.checkCollisions = true;
+            StaircaseBack.parent = midFloorGroup;
 
             // Gallery Perimeter Walls
             wallMeshes.north = BABYLON.MeshBuilder.CreateBox("wallNorth", {width: roomConfig.width, height: roomConfig.wallHeight, depth: roomConfig.wallThickness}, scene);
@@ -619,10 +649,10 @@
 
             createCourtyard();
 
-            // Load artworks dynamically inside the scene lifecycle[cite: 5]
+            // Load artworks dynamically inside the scene lifecycle
             loadArtworksFromDatabase(scene);
 
-            // Sculpture & Pedestal moved to the grass patch in the courtyard (X: 0, Z: -38.5)
+            // Sculpture & Pedestal in the courtyard
             const pedestal = BABYLON.MeshBuilder.CreateCylinder("pedestal", {height: 0.8, diameter: 1.2}, scene);
             pedestal.position = new BABYLON.Vector3(0, 0.435, -38.5);
             pedestal.checkCollisions = true;
@@ -654,6 +684,10 @@
 
                 if (ceilingMesh) {
                     ceilingMesh.position.y = h;
+                }
+
+                if (roofMesh) {
+                    roofMesh.position.y = h; // Sits precisely flush on top of the ceiling without clipping interior
                 }
 
                 ["north", "east", "west"].forEach(wallId => {
