@@ -190,7 +190,10 @@
                     // Apply texture material
                     const artMat = new BABYLON.StandardMaterial(data.name + "Mat", scene);
                     artMat.diffuseTexture = new BABYLON.Texture(data.imageUrl, scene);
-                    artMat.emissiveColor = new BABYLON.Color3(0.1, 0.1, 0.1); 
+                    artMat.emissiveColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+
+                    artMat.backFaceCulling = false;
+                    
                     art.material = artMat;
 
                     // Store artwork metadata for UI popups and placement positioning
