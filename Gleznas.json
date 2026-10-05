@@ -1,6 +1,6 @@
 [
   {
-    "name": "art1",
+    "name": "S1G1",
     "width": 3.5,
     "height": 2.5,
     "wallId": "north",
@@ -12,7 +12,7 @@
     "description": "Lorem ipsum dolor sit amet."
   },
   {
-    "name": "art2",
+    "name": "S1G2",
     "width": 3.5,
     "height": 2.5,
     "wallId": "north",
@@ -24,7 +24,7 @@
     "description": "A geometric study on chromatic dissonance and spatial perception."
   },
   {
-    "name": "art3",
+    "name": "S1G3",
     "width": 3.5,
     "height": 2.5,
     "wallId": "north",
@@ -36,12 +36,12 @@
     "description": "A quick brown fox jumped over the lazy dogs."
   },
   {
-    "name": "art4",
+    "name": "S2G3",
     "width": 3.5,
     "height": 2.5,
     "wallId": "north",
     "relativeOffset": 0.25,
-    "heightY": 4.4,
+    "heightY": 8.8,
     "imageUrl": "https://i.postimg.cc/3Rm3zDP6/a-face-in-a-blue-light.jpg",
     "title": "A Face in a Blue Light",
     "artist": "Unknown",
