@@ -18,10 +18,10 @@
     "wallId": "north",
     "relativeOffset": 0,
     "heightY": 2.2,
-    "imageUrl": "https://i.postimg.cc/2Sb1wTzd/a-cartoon-of-a-man-and-woman-holding-umbrellas-in-the-rain.jpg",
-    "title": "Totoro",
-    "artist": "Hayao Miyazaki",
-    "description": "Animism."
+    "imageUrl": "https://i.postimg.cc/Kz4rrBHj/Palaist-un-atgriezties.png",
+    "title": "Palaist un atgriezties (Release and return)",
+    "artist": "Renāte Pagaste, 2025.",
+    "description": "Audekls, eļļa. (Oil on canvas)"
   },
   {
     "name": "S1G3",
@@ -30,10 +30,10 @@
     "wallId": "north",
     "relativeOffset": 0.25,
     "heightY": 2.2,
-    "imageUrl": "https://i.postimg.cc/yxLyKWRQ/JUUUUUBOT-7-127270360-1-dui-xiang-de-OC-mo-yu.jpg",
-    "title": "Dui Xiang De OC Mo Yu",
-    "artist": "Juu",
-    "description": "A quick brown fox jumped over the lazy dogs."
+    "imageUrl": "https://i.postimg.cc/2Sb1wTzd/a-cartoon-of-a-man-and-woman-holding-umbrellas-in-the-rain.jpg",
+    "title": "Totoro",
+    "artist": "Hayao Miyazaki",
+    "description": "Animism."
   },
   {
     "name": "S2G1",
@@ -42,10 +42,10 @@
     "wallId": "north",
     "relativeOffset": -0.25,
     "heightY": 6.8,
-    "imageUrl": "https://i.postimg.cc/Kz4rrBHj/Palaist-un-atgriezties.png",
-    "title": "Palaist un atgriezties (Release and return)",
-    "artist": "Renāte Pagaste, 2025.",
-    "description": "Audekls, eļļa. (Oil on canvas)"
+    "imageUrl": "https://i.postimg.cc/yxLyKWRQ/JUUUUUBOT-7-127270360-1-dui-xiang-de-OC-mo-yu.jpg",
+    "title": "Dui Xiang De OC Mo Yu",
+    "artist": "Juu",
+    "description": "A quick brown fox jumped over the lazy dogs."
   },
   {
     "name": "S2G2",
