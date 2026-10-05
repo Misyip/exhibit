@@ -6,9 +6,9 @@
     "wallId": "north",
     "relativeOffset": -0.25,
     "heightY": 2.2,
-    "imageUrl": "https://i.postimg.cc/BnqMd91K/sheya-109214920-yue-xiano-qi-shu-shi.jpg",
-    "title": "Yue Xiano Qi Shu Shi",
-    "artist": "Sheya",
+    "imageUrl": "https://i.postimg.cc/7ZG5VXxm/a-bird-flying-in-the-sky.png",
+    "title": "A Bird Flying in the Sky",
+    "artist": "Unknown",
     "description": "Lorem ipsum dolor sit amet."
   },
   {
@@ -18,10 +18,10 @@
     "wallId": "north",
     "relativeOffset": 0,
     "heightY": 2.2,
-    "imageUrl": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80",
-    "title": "Prism Studies No. 4",
-    "artist": "Marcus Vance",
-    "description": "A geometric study on chromatic dissonance and spatial perception."
+    "imageUrl": "https://i.postimg.cc/2Sb1wTzd/a-cartoon-of-a-man-and-woman-holding-umbrellas-in-the-rain.jpg",
+    "title": "Totoro",
+    "artist": "Hayao Miyazaki",
+    "description": "Animism."
   },
   {
     "name": "S1G3",
