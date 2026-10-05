@@ -36,6 +36,30 @@
     "description": "A quick brown fox jumped over the lazy dogs."
   },
   {
+    "name": "S2G1",
+    "width": 3.5,
+    "height": 2.5,
+    "wallId": "north",
+    "relativeOffset": -0.25,
+    "heightY": 7.0,
+    "imageUrl": "https://i.postimg.cc/Kz4rrBHj/Palaist-un-atgriezties.png",
+    "title": "Palaist un atgriezties (Release and return)",
+    "artist": "Renāte Pagaste, 2025.",
+    "description": "Audekls, eļļa. (Oil on canvas)"
+  },
+  {
+    "name": "S2G2",
+    "width": 2.5,
+    "height": 3.5,
+    "wallId": "north",
+    "relativeOffset": 0,
+    "heightY": 7.0,
+    "imageUrl": "https://i.postimg.cc/rFTRq5Nc/359336.jpg",
+    "title": "Symbiosis",
+    "artist": "Unknown",
+    "description": "Dignissimos illum a praesentium deserunt natus voluptates iusto voluptas."
+  },
+  {
     "name": "S2G3",
     "width": 3.5,
     "height": 2.5,
