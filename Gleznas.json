@@ -1,6 +1,6 @@
 [
   {
-    "name": "S1G1",
+    "name": "S1G1N",
     "width": 3.5,
     "height": 2.5,
     "wallId": "north",
@@ -12,7 +12,7 @@
     "description": "Lorem ipsum dolor sit amet."
   },
   {
-    "name": "S1G2",
+    "name": "S1G2N",
     "width": 3.5,
     "height": 2.5,
     "wallId": "north",
@@ -24,7 +24,7 @@
     "description": "Audekls, eļļa. (Oil on canvas)"
   },
   {
-    "name": "S1G3",
+    "name": "S1G3N",
     "width": 3.5,
     "height": 2.5,
     "wallId": "north",
@@ -36,7 +36,31 @@
     "description": "Animism."
   },
   {
-    "name": "S2G1",
+    "name": "S1G4W",
+    "width": 3.5,
+    "height": 2.5,
+    "wallId": "west",
+    "relativeOffset": 0,
+    "heightY": 2.2,
+    "imageUrl": "https://i.postimg.cc/gkD0HQFR/a-mountain-range-with-snow.png",
+    "title": "A Mountain Range with Snow",
+    "artist": "Unknown",
+    "description": "Cold."
+  },
+  {
+    "name": "S1G5E",
+    "width": 3.5,
+    "height": 2.5,
+    "wallId": "east",
+    "relativeOffset": 0,
+    "heightY": 2.2,
+    "imageUrl": "https://i.postimg.cc/zGQ8d1dj/a-log-cabin-in-the-woods.png",
+    "title": "A Log Cabin in the Woods",
+    "artist": "Unknown",
+    "description": "Green."
+  },
+  {
+    "name": "S2G1N",
     "width": 3.5,
     "height": 2.5,
     "wallId": "north",
@@ -48,7 +72,7 @@
     "description": "A quick brown fox jumped over the lazy dogs."
   },
   {
-    "name": "S2G2",
+    "name": "S2G2N",
     "width": 2.5,
     "height": 3.5,
     "wallId": "north",
@@ -60,7 +84,7 @@
     "description": "Dignissimos illum a praesentium deserunt natus voluptates iusto voluptas."
   },
   {
-    "name": "S2G3",
+    "name": "S2G3N",
     "width": 3.5,
     "height": 2.5,
     "wallId": "north",
