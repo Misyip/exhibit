@@ -1,0 +1,26 @@
+[
+  {
+    "name": "art1",
+    "width": 2.5,
+    "height": 3.5,
+    "wallId": "north",
+    "relativeOffset": -0.25,
+    "heightY": 2.2,
+    "imageUrl": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80",
+    "title": "Vibrant Botani",
+    "artist": "Elena Rostova",
+    "description": "An exploration of botanical forms using saturated acrylic tones."
+  },
+  {
+    "name": "art2",
+    "width": 3.5,
+    "height": 2.5,
+    "wallId": "north",
+    "relativeOffset": 0,
+    "heightY": 2.2,
+    "imageUrl": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80",
+    "title": "Prism Studies No. 4",
+    "artist": "Marcus Vance",
+    "description": "A geometric study on chromatic dissonance and spatial perception."
+  }
+]
