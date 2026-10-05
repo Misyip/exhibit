@@ -687,11 +687,11 @@
                     } else if (wallId === "east") {
                         art.position.x = halfW - wallOffset - surfaceGap;
                         art.position.z = d * relOffset;
-                        art.rotation.y = -Math.PI / 2;
+                        art.rotation.y = Math.PI / 2;
                     } else if (wallId === "west") {
                         art.position.x = -halfW + wallOffset - surfaceGap;
                         art.position.z = d * relOffset;
-                        art.rotation.y = Math.PI / 2;
+                        art.rotation.y = -Math.PI / 2;
                     }
                 });
             };
