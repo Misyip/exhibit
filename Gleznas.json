@@ -1,8 +1,8 @@
 [
   {
     "name": "art1",
-    "width": 2.5,
-    "height": 3.5,
+    "width": 3.5,
+    "height": 2.5,
     "wallId": "north",
     "relativeOffset": -0.25,
     "heightY": 2.2,
