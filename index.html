@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Babylon.js Virtual Exhibition - Connected MidFloor Railing</title>
+    <!-- Import Babylon.js from the official CDN -->
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            font-family: sans-serif;
+        }
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+        #ui-layer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        #ui-layer h2 {
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+        }
+        #ui-layer p {
+            margin: 4px 0;
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        /* Bottom Info Modal Panel */
+        #info-modal {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            width: 90%;
+            max-width: 550px;
+            background: rgba(20, 20, 20, 0.92);
+            color: #fff;
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7);
+            border: 1px solid #444;
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            box-sizing: border-box;
+            transform: translate(-50%, 60px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+        #info-modal.active {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+        #info-modal h3 {
+            margin-top: 0;
+            color: #f0c040;
+            font-size: 1.25rem;
+            margin-bottom: 2px;
+        }
+        #info-modal h4 {
+            margin: 0 0 10px 0;
+            color: #aaa;
+            font-weight: normal;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+        #info-modal p {
+            line-height: 1.45;
+            color: #ddd;
+            font-size: 0.88rem;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    
+    <div id="ui-layer">
+        <h2>Virtual Gallery (Two Stories)</h2>
+        <p><strong>Click canvas</strong> to look around</p>
+        <p><strong>W, A, S, D</strong> or <strong>Arrows</strong> to walk up/down stairs</p>
+        <p><strong>Scroll Wheel</strong> to zoom camera</p>
+        <p>Look at artwork to view info</p>
+    </div>
+
+    <div id="info-modal">
+        <h3 id="modal-title">Artwork Title</h3>
+        <h4 id="modal-artist">Artist Name</h4>
+        <p id="modal-desc">Detailed artwork description goes here.</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("renderCanvas");
+        const engine = new BABYLON.Engine(canvas, true);
+
+        // UI Modal Elements
+        const modal = document.getElementById("info-modal");
+        const modalTitle = document.getElementById("modal-title");
+        const modalArtist = document.getElementById("modal-artist");
+        const modalDesc = document.getElementById("modal-desc");
+
+        let activeArtwork = null;
+        const interactiveArtworks = [];
+        const wallMeshes = {};
+        const surfaceMaterials = {};
+        let groundMesh = null;
+        let ceilingMesh = null;
+        let courtyardGroup = null;
+        let updateLayout = null;
+        let camera = null;
+
+        let roomConfig = {
+            width: 50,
+            depth: 14,
+            wallThickness: 0.5,
+            wallHeight: 9.0,
+            colors: {
+                floor: "#575757",   
+                ceiling: "#ffffff",
+                north: "#9e3434",
+                south: "#d0e4f7",   
+                east: "#9e3434",
+                west: "#9e3434"
+            },
+            textures: {
+                floor: null,
+                ceiling: null,
+                north: null,
+                south: null, 
+                east: null,
+                west: null
+            }
+        };
+
+        const showArtworkInfo = (artMesh) => {
+            if (!artMesh || !artMesh.metadata) return;
+            activeArtwork = artMesh;
+            
+            modalTitle.textContent = artMesh.metadata.title;
+            modalArtist.textContent = artMesh.metadata.artist;
+            modalDesc.textContent = artMesh.metadata.description;
+            
+            modal.classList.add("active");
+        };
+
+        const hideArtworkInfo = () => {
+            modal.classList.remove("active");
+            activeArtwork = null;
+        };
+
+        const createScene = function () {
+            const scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color3(0.7, 0.85, 1.0);
+
+            window.setSurfaceColor = (surface, hexColor) => {
+                if (surfaceMaterials[surface]) {
+                    surfaceMaterials[surface].diffuseColor = BABYLON.Color3.FromHexString(hexColor);
+                    roomConfig.colors[surface] = hexColor;
+                }
+            };
+
+            // 1. SKYBOX ENVIRONMENT
+            const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 500.0 }, scene);
+            const skyboxMaterial = new BABYLON.StandardMaterial("skyBoxMat", scene);
+            skyboxMaterial.backFaceCulling = false;
+            
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
+                "", 
+                scene, 
+                undefined, 
+                undefined, 
+                [
+                    "https://i.postimg.cc/8CDPTx5q/px.png", 
+                    "https://i.postimg.cc/VkXkQzfY/py.png", 
+                    "https://i.postimg.cc/bv8Nq4rj/pz.png", 
+                    "https://i.postimg.cc/wjDj89qY/nx.png", 
+                    "https://i.postimg.cc/NjRjqQsq/ny.png", 
+                    "https://i.postimg.cc/JzjzVRrM/nz.png"
+                ]
+            );
+            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+            
+            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            skybox.material = skyboxMaterial;
+
+            // 2. LIGHTING
+            const ambientLight = new BABYLON.HemisphericLight("ambientLight", new BABYLON.Vector3(0, 1, 0), scene);
+            ambientLight.intensity = 0.8;
+            
+            const sunLight = new BABYLON.DirectionalLight("sunLight", new BABYLON.Vector3(-0.4, -0.8, -0.6), scene);
+            sunLight.intensity = 0.9;
+
+            // 3. PHYSICS & GRAVITY
+            scene.gravity = new BABYLON.Vector3(0, -0.05, 0); 
+            scene.collisionsEnabled = true; 
+
+            // 4. FIRST-PERSON CAMERA
+            const minFov = 0.25; 
+            const maxFov = 1.30; 
+            const zoomSensitivity = 0.0015;
+
+            camera = new BABYLON.UniversalCamera("visitorCamera", new BABYLON.Vector3(8, 1.6, -2), scene);
+            camera.attachControl(canvas, true);
+            
+            camera.fov = maxFov;
+            camera.applyGravity = true;
+            camera.checkCollisions = true;
+            camera.minZ = 0.05; 
+            camera.ellipsoid = new BABYLON.Vector3(0.5, 0.8, 0.5); 
+            camera.speed = 0.12; 
+            
+            camera.keysUp.push(87);    
+            camera.keysDown.push(83);  
+            camera.keysLeft.push(65);  
+            camera.keysRight.push(68); 
+
+            scene.onPointerObservable.add((pointerInfo) => {
+                if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERWHEEL) {
+                    const event = pointerInfo.event;
+                    const delta = event.deltaY;
+                    
+                    camera.fov += delta * zoomSensitivity;
+                    camera.fov = Math.max(minFov, Math.min(maxFov, camera.fov));
+                }
+            });
+
+            // 5. EXHIBITION HALL FLOOR & CEILING
+            groundMesh = BABYLON.MeshBuilder.CreateGround("floor", {width: roomConfig.width, height: roomConfig.depth}, scene);
+            groundMesh.checkCollisions = true; 
+            
+            const groundMat = new BABYLON.StandardMaterial("floorMat", scene);
+            groundMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor);
+            groundMesh.material = groundMat;
+            surfaceMaterials.floor = groundMat;
+
+            ceilingMesh = BABYLON.MeshBuilder.CreateGround("ceiling", {width: roomConfig.width, height: roomConfig.depth}, scene);
+            ceilingMesh.rotation.x = Math.PI; 
+            ceilingMesh.checkCollisions = true;
+
+            const ceilingMat = new BABYLON.StandardMaterial("ceilingMat", scene);
+            ceilingMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.ceiling);
+            ceilingMesh.material = ceilingMat;
+            surfaceMaterials.ceiling = ceilingMat;
+
+            // INTERMEDIATE FLOOR DIVIDER & MIDFLOOR RAILING
+            const midFloorMat = new BABYLON.StandardMaterial("midFloorMat", scene);
+            midFloorMat.diffuseColor = BABYLON.Color3.FromHexString("#575757");
+            midFloorMat.backFaceCulling = false;
+
+            const stairWallMat = new BABYLON.StandardMaterial("stairWallMat", scene);
+            stairWallMat.diffuseColor = new BABYLON.Color3(0.85, 0.85, 0.85);
+
+            const midFloorGroup = new BABYLON.TransformNode("midFloorGroup", scene);
+            const halfW = roomConfig.width / 2; 
+            const halfD = roomConfig.depth / 2; 
+            const wallOffset = roomConfig.wallThickness / 2; 
+
+            const innerMinZ = -halfD + wallOffset; 
+            const innerMaxZ = halfD - wallOffset;   
+            const exactMidDepth = innerMaxZ - innerMinZ; 
+            const midCenterZ = (innerMinZ + innerMaxZ) / 2; 
+
+            const leftWidth = 10;
+            const midFloorLeft = BABYLON.MeshBuilder.CreateGround("midFloorLeft", {width: leftWidth, height: exactMidDepth}, scene);
+            midFloorLeft.position.set(-halfW + leftWidth / 2, 4.5, midCenterZ);
+            midFloorLeft.checkCollisions = true;
+            midFloorLeft.material = midFloorMat;
+            midFloorLeft.parent = midFloorGroup;
+
+            const rightWidth = 30;
+            const midFloorRight = BABYLON.MeshBuilder.CreateGround("midFloorRight", {width: rightWidth, height: exactMidDepth}, scene);
+            midFloorRight.position.set(-5 + rightWidth / 2, 4.5, midCenterZ);
+            midFloorRight.checkCollisions = true;
+            midFloorRight.material = midFloorMat;
+            midFloorRight.parent = midFloorGroup;
+
+            const northWidth = 10;
+            const stairMeetingZ = -4.3; 
+            const northDepth = innerMaxZ - stairMeetingZ;
+            const midFloorNorth = BABYLON.MeshBuilder.CreateGround("midFloorNorth", {width: northWidth, height: northDepth}, scene);
+            midFloorNorth.position.set(-10, 4.5, stairMeetingZ + northDepth / 2);
+            midFloorNorth.checkCollisions = true;
+            midFloorNorth.material = midFloorMat;
+            midFloorNorth.parent = midFloorGroup;
+
+            const midFloorConnectorRail = BABYLON.MeshBuilder.CreateBox("midFloorConnectorRail", {width: 2.2, height: 1.1, depth: 0.15}, scene);
+            midFloorConnectorRail.position.set(-5.07, 3.96 + 1.1, -5.4);
+            midFloorConnectorRail.rotation.y = Math.PI / 2;
+            midFloorConnectorRail.material = stairWallMat;
+            midFloorConnectorRail.checkCollisions = true;
+            midFloorConnectorRail.parent = midFloorGroup;
+
+            // Gallery Perimeter Walls
+            wallMeshes.north = BABYLON.MeshBuilder.CreateBox("wallNorth", {width: roomConfig.width, height: roomConfig.wallHeight, depth: roomConfig.wallThickness}, scene);
+            wallMeshes.east  = BABYLON.MeshBuilder.CreateBox("wallEast",  {width: roomConfig.wallThickness, height: roomConfig.wallHeight, depth: roomConfig.depth}, scene);
+            wallMeshes.west  = BABYLON.MeshBuilder.CreateBox("wallWest",  {width: roomConfig.wallThickness, height: roomConfig.wallHeight, depth: roomConfig.depth}, scene);
+
+            ["north", "east", "west"].forEach(wallId => {
+                const wall = wallMeshes[wallId];
+                wall.checkCollisions = true;
+                
+                const mat = new BABYLON.StandardMaterial(`wallMat_${wallId}`, scene);
+                mat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors[wallId] || "#ffffff");
+
+                wall.material = mat;
+                surfaceMaterials[wallId] = mat;
+            });
+
+            // GLASS WALL WITH OPEN DOORWAY
+            const entranceX = 8;
+            const doorWidth = 3.2;
+            const doorHeight = 3.2;
+            const doorMinX = entranceX - doorWidth / 2; 
+            const doorMaxX = entranceX + doorWidth / 2; 
+            const glassLeftWidth = doorMinX - (-halfW); 
+            const rightGlassWidth = halfW - doorMaxX;  
+
+            const glassMat = new BABYLON.StandardMaterial("wallMat_south", scene);
+            glassMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.south || "#d0e4f7");
+            glassMat.alpha = 0.28;
+            glassMat.specularPower = 128;
+            glassMat.specularColor = new BABYLON.Color3(1, 1, 1);
+            surfaceMaterials.south = glassMat;
+
+            const wallSouthGroup = new BABYLON.TransformNode("wallSouthGroup", scene);
+
+            const southLeft = BABYLON.MeshBuilder.CreateBox("wallSouthLeft", {width: glassLeftWidth, height: roomConfig.wallHeight, depth: roomConfig.wallThickness}, scene);
+            southLeft.position.set(-halfW + glassLeftWidth / 2, 0, 0);
+            southLeft.material = glassMat;
+            southLeft.checkCollisions = true;
+            southLeft.parent = wallSouthGroup;
+
+            const southRight = BABYLON.MeshBuilder.CreateBox("wallSouthRight", {width: rightGlassWidth, height: roomConfig.wallHeight, depth: roomConfig.wallThickness}, scene);
+            southRight.position.set(halfW - rightGlassWidth / 2, 0, 0);
+            southRight.material = glassMat;
+            southRight.checkCollisions = true;
+            southRight.parent = wallSouthGroup;
+
+            const transomHeight = roomConfig.wallHeight - doorHeight;
+            if (transomHeight > 0) {
+                const southTop = BABYLON.MeshBuilder.CreateBox("wallSouthTop", {width: doorWidth, height: transomHeight, depth: roomConfig.wallThickness}, scene);
+                southTop.position.set(entranceX, doorHeight + transomHeight / 2 - roomConfig.wallHeight / 2, 0);
+                southTop.material = glassMat;
+                southTop.checkCollisions = true;
+                southTop.parent = wallSouthGroup;
+            }
+
+            wallMeshes.south = wallSouthGroup;
+
+            // STRUCTURAL MULLIONS & FRAMING
+            const mullionMat = new BABYLON.StandardMaterial("mullionMat", scene);
+            mullionMat.diffuseColor = new BABYLON.Color3(0.15, 0.15, 0.18);
+
+            for (let x = -24; x <= 24; x += 4) {
+                if (x > doorMinX && x < doorMaxX) {
+                    if (transomHeight > 0) {
+                        const mullionTop = BABYLON.MeshBuilder.CreateBox(`mullion_${x}_top`, {width: 0.12, height: transomHeight, depth: 0.55}, scene);
+                        mullionTop.position.set(x, doorHeight + transomHeight / 2, -roomConfig.depth / 2);
+                        mullionTop.material = mullionMat;
+                        mullionTop.checkCollisions = true;
+                    }
+                } else {
+                    const mullion = BABYLON.MeshBuilder.CreateBox(`mullion_${x}`, {width: 0.12, height: roomConfig.wallHeight, depth: 0.55}, scene);
+                    mullion.position.set(x, roomConfig.wallHeight / 2, -roomConfig.depth / 2);
+                    mullion.material = mullionMat;
+                    mullion.checkCollisions = true;
+                }
+            }
+
+            const horizontalMullion = BABYLON.MeshBuilder.CreateBox("horizontalMullion", {
+                width: roomConfig.width, 
+                height: 0.18, 
+                depth: 0.55
+            }, scene);
+            horizontalMullion.position.set(0, 4.5, -roomConfig.depth / 2);
+            horizontalMullion.material = mullionMat;
+            horizontalMullion.checkCollisions = true;
+
+            const entranceZ = -roomConfig.depth / 2;
+            const doorFrameLeft = BABYLON.MeshBuilder.CreateBox("doorFrameLeft", {width: 0.15, height: doorHeight, depth: 0.6}, scene);
+            doorFrameLeft.position.set(doorMinX, doorHeight / 2, entranceZ);
+            doorFrameLeft.material = mullionMat;
+
+            const doorFrameRight = BABYLON.MeshBuilder.CreateBox("doorFrameRight", {width: 0.15, height: doorHeight, depth: 0.6}, scene);
+            doorFrameRight.position.set(doorMaxX, doorHeight / 2, entranceZ);
+            doorFrameRight.material = mullionMat;
+
+            const doorFrameTop = BABYLON.MeshBuilder.CreateBox("doorFrameTop", {width: doorWidth + 0.15, height: 0.15, depth: 0.6}, scene);
+            doorFrameTop.position.set(entranceX, doorHeight, entranceZ);
+            doorFrameTop.material = mullionMat;
+
+            const entranceMat = BABYLON.MeshBuilder.CreateGround("entranceMat", {width: doorWidth, height: 2.2}, scene);
+            entranceMat.position.set(entranceX, 0.01, entranceZ);
+            const matMaterial = new BABYLON.StandardMaterial("matMaterial", scene);
+            matMaterial.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+            entranceMat.material = matMaterial;
+
+            // 6. STAIRCASE WITH FLIPPED INVISIBLE WALKABLE RAMP & CONNECTED RAILINGS
+            const createStaircase = () => {
+                const staircaseGroup = new BABYLON.TransformNode("staircaseGroup", scene);
+                staircaseGroup.position.set(-10, 0, -5.4); 
+                staircaseGroup.rotation.y = Math.PI;
+
+                const stairMat = new BABYLON.StandardMaterial("stairMat", scene);
+                stairMat.diffuseColor = new BABYLON.Color3(0.92, 0.92, 0.92); 
+
+                const totalHeight = 4.5; 
+                const flightLength = 10;
+                const stepCount = 20;
+                const stepWidth = flightLength / stepCount;
+                const stepHeight = totalHeight / stepCount;
+                
+                const stairDepth = 2.2;
+                const railingThickness = 0.15;
+                const railHeightAboveStairs = 1.1; 
+
+                const stairOuterBox = BABYLON.MeshBuilder.CreateBox("stairOuterBox", {width: flightLength + 0.5, height: 0.2, depth: stairDepth + 0.2}, scene);
+                stairOuterBox.position.set(0, 0.1, 0);
+                stairOuterBox.material = stairMat;
+                stairOuterBox.parent = staircaseGroup;
+
+                const extendedRailLength = flightLength + 1.2;
+
+                const railSouth = BABYLON.MeshBuilder.CreateBox("railSouth", {width: extendedRailLength, height: totalHeight + railHeightAboveStairs, depth: railingThickness}, scene);
+                railSouth.position.set(0.6, (totalHeight + railHeightAboveStairs) / 2, -stairDepth / 2 - railingThickness / 2);
+                railSouth.material = stairWallMat;
+                railSouth.checkCollisions = true;
+                railSouth.parent = staircaseGroup;
+
+                const railNorth = BABYLON.MeshBuilder.CreateBox("railNorth", {width: extendedRailLength, height: totalHeight + railHeightAboveStairs, depth: railingThickness}, scene);
+                railNorth.position.set(0.6, (totalHeight + railHeightAboveStairs) / 2, stairDepth / 2 + railingThickness / 2);
+                railNorth.material = stairWallMat;
+                railNorth.checkCollisions = true;
+                railNorth.parent = staircaseGroup;
+
+                for (let i = 0; i < stepCount; i++) {
+                    const stepUp = BABYLON.MeshBuilder.CreateBox(`stepUp_${i}`, {width: stepWidth, height: stepHeight, depth: stairDepth}, scene);
+                    const posX = -flightLength / 2 + (i + 0.5) * stepWidth;
+                    const posY = (i + 0.5) * stepHeight;
+                    stepUp.position.set(posX, posY, 0);
+                    stepUp.material = stairMat;
+                    stepUp.checkCollisions = false; 
+                    stepUp.parent = staircaseGroup;
+                }
+
+                const rampLengthHypotenuse = Math.sqrt(flightLength * flightLength + totalHeight * totalHeight);
+                const stairRamp = BABYLON.MeshBuilder.CreateBox("stairRamp", {width: flightLength, height: 0.2, depth: stairDepth - 0.1}, scene);
+                stairRamp.scaling.x = rampLengthHypotenuse / flightLength;
+                const angle = Math.atan2(totalHeight, flightLength);
+                stairRamp.rotation.z = angle; 
+                stairRamp.position.set(0, totalHeight / 2, 0);
+                stairRamp.isVisible = false;       
+                stairRamp.checkCollisions = true;  
+                stairRamp.parent = staircaseGroup;
+            };
+
+            createStaircase();
+
+            // 7. OUTSIDE COURTYARD AREA WITH GRASS PATCH
+            const createCourtyard = () => {
+                courtyardGroup = new BABYLON.TransformNode("courtyardGroup", scene);
+
+                const courtyardWidth = 60;
+                const courtyardDepth = 35;
+                const courtyardCenterZ = -roomConfig.depth / 2 - courtyardDepth / 2;
+
+                const slabTileSizeX = 6;
+                const slabTileSizeZ = 5;
+                const slabMat = new BABYLON.StandardMaterial("slabMat", scene);
+                slabMat.diffuseColor = new BABYLON.Color3(0.72, 0.74, 0.76); 
+                
+                const slabBorderMat = new BABYLON.StandardMaterial("slabBorderMat", scene);
+                slabBorderMat.diffuseColor = new BABYLON.Color3(0.45, 0.47, 0.5);
+
+                const courtyardBase = BABYLON.MeshBuilder.CreateGround("courtyardBase", {width: courtyardWidth, height: courtyardDepth}, scene);
+                courtyardBase.position.set(0, -0.02, courtyardCenterZ);
+                courtyardBase.material = slabBorderMat;
+                courtyardBase.parent = courtyardGroup;
+
+                for (let x = -courtyardWidth / 2 + slabTileSizeX / 2; x < courtyardWidth / 2; x += slabTileSizeX) {
+                    for (let z = courtyardCenterZ - courtyardDepth / 2 + slabTileSizeZ / 2; z < courtyardCenterZ + courtyardDepth / 2; z += slabTileSizeZ) {
+                        const slab = BABYLON.MeshBuilder.CreateBox(`slab_${x}_${z}`, {width: slabTileSizeX - 0.1, height: 0.05, depth: slabTileSizeZ - 0.1}, scene);
+                        slab.position.set(x, -0.01, z);
+                        slab.material = slabMat;
+                        slab.checkCollisions = true;
+                        slab.parent = courtyardGroup;
+                    }
+                }
+
+                const grassMat = new BABYLON.StandardMaterial("grassMat", scene);
+                grassMat.diffuseColor = new BABYLON.Color3(0.28, 0.52, 0.22); 
+                grassMat.specularColor = new BABYLON.Color3(0.05, 0.05, 0.05); 
+
+                const grassPatch = BABYLON.MeshBuilder.CreateBox("grassPatch", {
+                    width: courtyardWidth - 0, 
+                    height: 0.07,              
+                    depth: 23.0                 
+                }, scene);
+                grassPatch.position.set(0, 0.0, courtyardCenterZ - 14.0);
+                grassPatch.material = grassMat;
+                grassPatch.checkCollisions = true;
+                grassPatch.parent = courtyardGroup;
+
+                const wallHeight = 4.0;
+                const wallThickness = 0.8;
+                const courtyardBackZ = courtyardCenterZ - courtyardDepth / 2;
+
+                const courtyardBackWall = BABYLON.MeshBuilder.CreateBox("courtyardBackWall", {width: courtyardWidth + wallThickness, height: wallHeight, depth: wallThickness}, scene);
+                courtyardBackWall.position.set(0, wallHeight / 2, courtyardBackZ);
+                courtyardBackWall.checkCollisions = true;
+                courtyardBackWall.parent = courtyardGroup;
+
+                const courtyardSideWallL = BABYLON.MeshBuilder.CreateBox("courtyardSideWallL", {width: wallThickness, height: wallHeight, depth: courtyardDepth}, scene);
+                courtyardSideWallL.position.set(-courtyardWidth / 2, wallHeight / 2, courtyardCenterZ);
+                courtyardSideWallL.checkCollisions = true;
+                courtyardSideWallL.parent = courtyardGroup;
+
+                const courtyardSideWallR = BABYLON.MeshBuilder.CreateBox("courtyardSideWallR", {width: wallThickness, height: wallHeight, depth: courtyardDepth}, scene);
+                courtyardSideWallR.position.set(courtyardWidth / 2, wallHeight / 2, courtyardCenterZ);
+                courtyardSideWallR.checkCollisions = true;
+                courtyardSideWallR.parent = courtyardGroup;
+
+                const gapWidth = (courtyardWidth - roomConfig.width) / 2;
+                const gapWallZ = -roomConfig.depth / 2;
+
+                const courtyardConnectL = BABYLON.MeshBuilder.CreateBox("courtyardConnectL", {width: gapWidth, height: wallHeight, depth: wallThickness}, scene);
+                courtyardConnectL.position.set(-roomConfig.width / 2 - gapWidth / 2, wallHeight / 2, gapWallZ);
+                courtyardConnectL.checkCollisions = true;
+                courtyardConnectL.parent = courtyardGroup;
+
+                const courtyardConnectR = BABYLON.MeshBuilder.CreateBox("courtyardConnectR", {width: gapWidth, height: wallHeight, depth: wallThickness}, scene);
+                courtyardConnectR.position.set(roomConfig.width / 2 + gapWidth / 2, wallHeight / 2, gapWallZ);
+                courtyardConnectR.checkCollisions = true;
+                courtyardConnectR.parent = courtyardGroup;
+
+                const concreteWallMat = new BABYLON.StandardMaterial("concreteWallMat", scene);
+                concreteWallMat.diffuseColor = new BABYLON.Color3(0.65, 0.67, 0.7);
+                courtyardBackWall.material = concreteWallMat;
+                courtyardSideWallL.material = concreteWallMat;
+                courtyardSideWallR.material = concreteWallMat;
+                courtyardConnectL.material = concreteWallMat;
+                courtyardConnectR.material = concreteWallMat;
+            };
+
+            createCourtyard();
+
+// Global array to store interactive artworks for raycasting/UI triggers
+const interactiveArtworks = [];
+
+// 8. DYNAMIC ARTWORK BINDING SYSTEM (Loaded from external source)
+const loadArtworksFromDatabase = async (scene) => {
+    try {
+        // FIXED: Use the raw.githubusercontent.com link instead of /blob/
+        const response = await fetch('https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Gleznas.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const artworksData = await response.json();
+
+        artworksData.forEach(data => {
+            // Create plane mesh for the artwork
+            const art = BABYLON.MeshBuilder.CreatePlane(data.name, {
+                width: data.width, 
+                height: data.height
+            }, scene);
+            
+            // Apply texture material
+            const artMat = new BABYLON.StandardMaterial(data.name + "Mat", scene);
+            artMat.diffuseTexture = new BABYLON.Texture(data.imageUrl, scene);
+            artMat.emissiveColor = new BABYLON.Color3(0.1, 0.1, 0.1); 
+            art.material = artMat;
+
+            // Store artwork metadata for UI popups and placement positioning
+            art.metadata = {
+                title: data.title,
+                artist: data.artist,
+                description: data.description,
+                wallId: data.wallId,
+                relativeOffset: data.relativeOffset,
+                heightY: data.heightY,
+                triggerDistance: 5.0
+            };
+
+            interactiveArtworks.push(art);
+        });
+
+        // Snap artworks into position against the respective gallery walls
+        if (typeof updateLayout === "function") {
+            updateLayout();
+        }
+
+        console.log("Artworks successfully loaded and bound from database.");
+
+    } catch (error) {
+        console.error("Failed to load artworks from database:", error);
+    }
+};
+
+// --- Inside your createScene() function ---
+const createScene = function () {
+    const scene = new BABYLON.Scene(engine);
+
+    // ... Your camera, lighting, and gallery architecture code ...
+
+    // Load artworks dynamically instead of hardcoding them
+    loadArtworksFromDatabase(scene);
+
+    return scene;
+};
+
+// Refresh database textures every 60 seconds automatically
+setInterval(async () => {
+    try {
+        // FIXED: Updated to use the correct raw GitHub link here as well
+        const response = await fetch('https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Gleznas.json');
+        const updatedData = await response.json();
+
+        updatedData.forEach(newData => {
+            const existingMesh = interactiveArtworks.find(m => m.name === newData.name);
+            if (existingMesh && existingMesh.material && existingMesh.material.diffuseTexture) {
+                // Hot-swap the texture if the image URL changed
+                const currentUrl = existingMesh.material.diffuseTexture.url;
+                if (currentUrl !== newData.imageUrl) {
+                    existingMesh.material.diffuseTexture = new BABYLON.Texture(newData.imageUrl, existingMesh.getScene());
+                    existingMesh.metadata.title = newData.title;
+                    existingMesh.metadata.artist = newData.artist;
+                    existingMesh.metadata.description = newData.description;
+                    console.log(`Live updated artwork: ${newData.name}`);
+                }
+            }
+        });
+    } catch (err) {
+        console.warn("Background sync failed:", err);
+    }
+}, 60000);
+
+            // Sculpture & Pedestal moved to the grass patch in the courtyard (X: 0, Z: -38.5)
+            const pedestal = BABYLON.MeshBuilder.CreateCylinder("pedestal", {height: 0.8, diameter: 1.2}, scene);
+            pedestal.position = new BABYLON.Vector3(0, 0.435, -38.5);
+            pedestal.checkCollisions = true;
+
+            const sculpture = BABYLON.MeshBuilder.CreateTorusKnot("sculpture", {radius: 0.4, tube: 0.1, p: 2, q: 3}, scene);
+            sculpture.position = new BABYLON.Vector3(0, 1.535, -38.5);
+            const sculptMat = new BABYLON.StandardMaterial("sculptMat", scene);
+            sculptMat.diffuseColor = new BABYLON.Color3(1, 0.7, 0); 
+            sculpture.material = sculptMat;
+
+            sculpture.metadata = {
+                title: "Knot of Infinity",
+                artist: "Studio Helix",
+                description: "A dynamic kinetic torus sculpture showcasing continuous motion.",
+                triggerDistance: 4.5
+            };
+            
+            interactiveArtworks.push(sculpture);
+
+            // 9. ROOM LAYOUT RECALCULATION
+            updateLayout = () => {
+                const w = roomConfig.width;
+                const d = roomConfig.depth;
+                const h = roomConfig.wallHeight;
+                const halfW = w / 2;
+                const halfD = d / 2;
+                const wallOffset = roomConfig.wallThickness / 2;
+                const wallCenterY = h / 2;
+
+                if (ceilingMesh) {
+                    ceilingMesh.position.y = h;
+                }
+
+                ["north", "east", "west"].forEach(wallId => {
+                    if (wallMeshes[wallId] && wallMeshes[wallId].scaling) {
+                        wallMeshes[wallId].scaling.y = h / 9.0;
+                    }
+                });
+
+                wallMeshes.north.position.set(0, wallCenterY, halfD);
+                wallMeshes.south.position.set(0, wallCenterY, -halfD);
+                wallMeshes.east.position.set(halfW, wallCenterY, 0);
+                wallMeshes.west.position.set(-halfW, wallCenterY, 0);
+
+                interactiveArtworks.forEach((art) => {
+                    if (!art.metadata || !art.metadata.wallId) return;
+
+                    const wallId = art.metadata.wallId;
+                    const relOffset = art.metadata.relativeOffset;
+                    const surfaceGap = 0.01;
+
+                    art.position.y = art.metadata.heightY;
+
+                    if (wallId === "north") {
+                        art.position.x = w * relOffset;
+                        art.position.z = halfD - wallOffset - surfaceGap;
+                        art.rotation.y = 0;
+                    } else if (wallId === "south") {
+                        art.position.x = w * relOffset;
+                        art.position.z = -halfD + wallOffset + surfaceGap;
+                        art.rotation.y = Math.PI;
+                    } else if (wallId === "east") {
+                        art.position.x = halfW - wallOffset - surfaceGap;
+                        art.position.z = d * relOffset;
+                        art.rotation.y = -Math.PI / 2;
+                    } else if (wallId === "west") {
+                        art.position.x = -halfW + wallOffset - surfaceGap;
+                        art.position.z = d * relOffset;
+                        art.rotation.y = Math.PI / 2;
+                    }
+                });
+            };
+
+            updateLayout();
+
+            camera.setTarget(new BABYLON.Vector3(camera.position.x, camera.position.y, camera.position.z + 10));
+
+            const isMeshInView = (mesh) => {
+                const frustumPlanes = BABYLON.Frustum.GetPlanes(camera.getTransformationMatrix());
+                return mesh.isInFrustum(frustumPlanes);
+            };
+
+            // 10. VISIBILITY & PROXIMITY CHECKING LOOP
+            scene.onBeforeRenderObservable.add(() => {
+                sculpture.rotation.y += 0.005;
+
+                if (activeArtwork) {
+                    const currentDist = BABYLON.Vector3.Distance(camera.position, activeArtwork.getAbsolutePosition());
+                    const exitThreshold = activeArtwork.metadata.triggerDistance + 1.2;
+                    const inView = isMeshInView(activeArtwork);
+                    
+                    if (currentDist > exitThreshold || !inView) {
+                        hideArtworkInfo();
+                    }
+                    return;
+                }
+
+                for (const art of interactiveArtworks) {
+                    const dist = BABYLON.Vector3.Distance(camera.position, art.getAbsolutePosition());
+                    const inView = isMeshInView(art);
+
+                    if (dist < art.metadata.triggerDistance && inView) {
+                        showArtworkInfo(art);
+                        break;
+                    }
+                }
+            });
+
+            return scene;
+        };
+
+        const scene = createScene();
+
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
