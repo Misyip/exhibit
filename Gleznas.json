@@ -13,15 +13,15 @@
   },
   {
     "name": "S1G2N",
-    "width": 3.5,
+    "width": 2.5,
     "height": 2.5,
     "wallId": "north",
     "relativeOffset": 0,
     "heightY": 2.2,
-    "imageUrl": "https://i.postimg.cc/Kz4rrBHj/Palaist-un-atgriezties.png",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Palaist%20un%20atgriezties-1.jpg",
     "title": "Palaist un atgriezties (Release and return)",
     "artist": "Renāte Pagaste, 2025.",
-    "description": "Audekls, eļļa. / Oil on canvas."
+    "description": "Audekls, eļļa. / Oil on canvas. / 100 x 100cm."
   },
   {
     "name": "S1G3N",
