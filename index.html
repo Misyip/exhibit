@@ -799,10 +799,16 @@
 
             createCourtyard();
 
-            // Load artworks & sculpture dynamically inside the scene lifecycle
-            loadArtworksFromDatabase(scene);
-            loadSculptureFromDatabase(scene);
+            // Initial load of artworks & sculpture dynamically inside the scene lifecycle
+            loadArtworksFromDatabase(scene, false);
+            loadSculptureFromDatabase(scene, false);
 
+            // POLLING INTERVAL: Check for JSON changes every 15 seconds (15000 ms)
+            setInterval(() => {
+                loadArtworksFromDatabase(scene, true);
+                loadSculptureFromDatabase(scene, true);
+            }, 15000);
+			
             // ROOM LAYOUT RECALCULATION
             updateLayout = () => {
                 const w = roomConfig.width;
