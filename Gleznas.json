@@ -1,15 +1,15 @@
 [
   {
     "name": "S1G1N",
-    "width": 3.5,
-    "height": 2.5,
+    "width": 2.5,
+    "height": 3.5,
     "wallId": "north",
     "relativeOffset": -0.25,
     "heightY": 2.2,
-    "imageUrl": "https://i.postimg.cc/7ZG5VXxm/a-bird-flying-in-the-sky.png",
-    "title": "A Bird Flying in the Sky",
-    "artist": "Unknown",
-    "description": "Lorem ipsum dolor sit amet."
+    "imageUrl": "https://github.com/Misyip/exhibit/blob/main/Klatbut-1.jpg",
+    "title": "Klātbūtnes svars (Weight of Presence)",
+    "artist": "Ina Kantiķe, 2026.",
+    "description": "Audekls, eļļa. / Oil on canvas. / 180 x 150 cm"
   },
   {
     "name": "S1G2N",
@@ -21,7 +21,7 @@
     "imageUrl": "https://i.postimg.cc/Kz4rrBHj/Palaist-un-atgriezties.png",
     "title": "Palaist un atgriezties (Release and return)",
     "artist": "Renāte Pagaste, 2025.",
-    "description": "Audekls, eļļa. (Oil on canvas)"
+    "description": "Audekls, eļļa. / Oil on canvas."
   },
   {
     "name": "S1G3N",
