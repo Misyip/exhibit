@@ -237,6 +237,11 @@
                     sculpture.rotation = new BABYLON.Vector3(data.rotation.x, data.rotation.y, data.rotation.z);
                 }
 
+				// Enable collisions for all sub-meshes of the sculpture so the visitor cannot walk through it
+                result.meshes.forEach(mesh => {
+                    mesh.checkCollisions = true;
+                });
+
                 sculpture.metadata = {
                     title: data.title,
                     artist: data.artist,
@@ -868,7 +873,7 @@
             // VISIBILITY & PROXIMITY CHECKING LOOP
             scene.onBeforeRenderObservable.add(() => {
                 if (sculpture) {
-                    sculpture.rotation.y += 0.005; // Optional rotation animation
+                    sculpture.rotation.y += 0.00; // Optional rotation animation
                 }
 
                 if (activeArtwork) {
