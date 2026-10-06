@@ -28,15 +28,27 @@
     "width": 2.5,
     "height": 2.5,
     "wallId": "north",
-    "relativeOffset": 0.25,
+    "relativeOffset": 0.10,
     "heightY": 2.2,
     "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Zaru%20neironi-1.jpg",
     "title": "Zaru neironi (Neuronal Branches)",
     "artist": "Renāte Pagaste, 2025.",
     "description": "Audekls, eļļa. / Oil on canvas. / 100 x 100 cm"
   },
+   {
+    "name": "S1G4N",
+    "width": 3.5,
+    "height": 3.0,
+    "wallId": "north",
+    "relativeOffset": 0.25,
+    "heightY": 2.2,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Aber%C4%81cijas%20pirmais%20stavs-1.jpg",
+    "title": "Aberācijas (Aberations)",
+    "artist": "Stīna Skulme, 2026.",
+    "description": "Audekls, akrils. / Acrylic on canvas. / 180 x 220 cm"
+  },
   {
-    "name": "S1G4W",
+    "name": "S1G1W",
     "width": 3.5,
     "height": 2.5,
     "wallId": "west",
@@ -48,7 +60,7 @@
     "description": "Cold."
   },
   {
-    "name": "S1G5E",
+    "name": "S1G1E",
     "width": 3.5,
     "height": 2.5,
     "wallId": "east",
@@ -96,7 +108,7 @@
     "description": "Commodi et et error commodi cupiditate et iusto officia."
   },
   {
-    "name": "S2G4W",
+    "name": "S2G1W",
     "width": 3.5,
     "height": 2.5,
     "wallId": "west",
@@ -108,7 +120,7 @@
     "description": "White."
   },
   {
-    "name": "S2G5E",
+    "name": "S2G1E",
     "width": 3.5,
     "height": 2.5,
     "wallId": "east",
