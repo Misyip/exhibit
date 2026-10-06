@@ -40,7 +40,7 @@
     "width": 3.5,
     "height": 3.0,
     "wallId": "north",
-    "relativeOffset": 0.25,
+    "relativeOffset": 0.30,
     "heightY": 2.2,
     "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Aber%C4%81cijas%20pirmais%20stavs-1.jpg",
     "title": "Aberācijas (Aberations)",
@@ -97,15 +97,27 @@
   },
   {
     "name": "S2G3N",
-    "width": 3.5,
-    "height": 2.5,
+    "width": 2.5,
+    "height": 3.5,
     "wallId": "north",
     "relativeOffset": 0.25,
     "heightY": 6.8,
-    "imageUrl": "https://i.postimg.cc/3Rm3zDP6/a-face-in-a-blue-light.jpg",
-    "title": "A Face in a Blue Light",
-    "artist": "Unknown",
-    "description": "Commodi et et error commodi cupiditate et iusto officia."
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Klatbut-s2-left-1.jpg",
+    "title": "Klātbūtnes svars (Weight of Presence)",
+    "artist": "Ina Kantiķe, 2026.",
+    "description": "Audekls, eļļa. / Oil on canvas. / 180 x 150 cm"
+  },
+  {
+    "name": "S2G4N",
+    "width": 2.5,
+    "height": 3.5,
+    "wallId": "north",
+    "relativeOffset": 0.30,
+    "heightY": 6.8,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Klatbut-s2-right-1.jpg",
+    "title": "Klātbūtnes svars (Weight of Presence)",
+    "artist": "Ina Kantiķe, 2026.",
+    "description": "Audekls, eļļa. / Oil on canvas. / 180 x 150 cm"
   },
   {
     "name": "S2G1W",
