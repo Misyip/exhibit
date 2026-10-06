@@ -84,19 +84,31 @@
     "description": "A quick brown fox jumped over the lazy dogs."
   },
   {
-    "name": "S2G2N",
+    "name": "S2G7N",
+    "width": 1,
+    "height": 0.5,
+    "wallId": "north",
+    "relativeOffset": -0.05,
+    "heightY": 5.0,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Biezi-sapno-b-1.jpg",
+    "title": "Piejūras vide nav tikai dzīvesvieta - tā ir vesels pasaules uztveres veids, kur ikdiena rit līdzās nepārtrauktiem piekrastes pārmaiņām.",
+    "artist": "Elīna Vagre",
+    "description": "The coastal environment is not merely a place to live - it is an entire way of seeing and experiencing the world, where everyday life unfolds alongside the continuous transformation of the coastline."
+  },
+  {
+    "name": "S2G8N",
     "width": 2.5,
-    "height": 3.5,
+    "height": 2.5,
     "wallId": "north",
     "relativeOffset": 0,
     "heightY": 6.8,
-    "imageUrl": "https://i.postimg.cc/rFTRq5Nc/359336.jpg",
-    "title": "Symbiosis",
-    "artist": "Unknown",
-    "description": "Dignissimos illum a praesentium deserunt natus voluptates iusto voluptas."
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Biezi-sapno-r-1.jpg",
+    "title": "Cilvēki bieži sapņo paši par savu piejūras māju, taču dabas nemitīgais un neatkarīgais ritējums atklāj šo sapņu, kā arī visa cilvēciskā laicīgumu un trauslumu.",
+    "artist": "Elīna Vagre",
+    "description": "People often dream of having a home by the sea, yet nature's constant and independent course reveals the transience and fragility of these dreams, and of all human existence."
   },
   {
-    "name": "S2G3N",
+    "name": "S2G9N",
     "width": 2.5,
     "height": 3.5,
     "wallId": "north",
@@ -108,7 +120,7 @@
     "description": "Audekls, eļļa. / Oil on canvas. / 180 x 150 cm"
   },
   {
-    "name": "S2G4N",
+    "name": "S2G10N",
     "width": 2.5,
     "height": 3.5,
     "wallId": "north",
