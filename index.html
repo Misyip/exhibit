@@ -224,7 +224,7 @@
                 
                 const data = await response.json();
 
-                const result = await BABYLON.SceneLoader.ImportMeshAsync("", "", data.modelUrl, scene);
+                const result = await BABYLON.SceneLoader.ImportMeshAsync("", data.modelUrl, "", scene);
                 sculpture = result.meshes[0]; 
                 
                 if (data.position) {
