@@ -1,0 +1,22 @@
+{
+  "modelUrl": "https://raw.githubusercontent.com/Misyip/exhibit/main/skulptura.glb",
+  "title": "Your Sculpture Title",
+  "artist": "Artist Name",
+  "description": "A detailed description of your GLB sculpture.",
+  "triggerDistance": 4.5,
+  "position": {
+    "x": 0,
+    "y": 0.85,
+    "z": -30.5
+  },
+  "scaling": {
+    "x": 2.5,
+    "y": 2.5,
+    "z": 2.5
+  },
+  "rotation": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  }
+}
