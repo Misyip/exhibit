@@ -84,6 +84,18 @@
     "description": "A quick brown fox jumped over the lazy dogs."
   },
   {
+    "name": "S2G6N",
+    "width": 1.5,
+    "height": 1.0,
+    "wallId": "north",
+    "relativeOffset": -0.05,
+    "heightY": 6.5,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Biezi-sapno-l-1.jpg",
+    "title": "Atrasties uz robežas nozīmē sadzīvot ar pastāvīgu nenoteiktību. Ūdensmājas atklāj cilvēku dzīvi vietās, kur jūra nepārtraukti pārzīmē robežu starp zemi un ūdeni.",
+    "artist": "Elīna Vagre",
+    "description": "To exist on the boundary means living with constant uncertainty. Waterhomes revels the lives of people in places where the sea continuously redraws the boundary between land and water."
+  },
+  {
     "name": "S2G7N",
     "width": 1,
     "height": 0.5,
