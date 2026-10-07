@@ -64,7 +64,7 @@
     "width": 2.0,
     "height": 1.5,
     "wallId": "west",
-    "relativeOffset": 0.05,
+    "relativeOffset": -0.05,
     "heightY": 2.2,
     "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small3-1.jpg",
     "title": "Aberācijas (Aberations)",
