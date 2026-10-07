@@ -449,7 +449,7 @@
                 wall.checkCollisions = true;
                 
                 const mat = new BABYLON.StandardMaterial(`wallMat_${wallId}`, scene);
-                mat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors[wallId] || "#ffffff");
+                mat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors[wallId] || "#575757");
 
                 wall.material = mat;
                 surfaceMaterials[wallId] = mat;
