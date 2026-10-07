@@ -192,27 +192,39 @@
     "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
   },
   {
-    "name": "S2G1W",
+    "name": "S2G1E",
     "width": 1.5,
     "height": 1.5,
-    "wallId": "west",
-    "relativeOffset": 0,
+    "wallId": "east",
+    "relativeOffset": -0.30,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/kur-ir-mana-ena-1.jpg",
-    "title": "Kur ir mana ēna (Where is My Shadow?)",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/apskaut-sevi-1.jpg",
+    "title": "Apskaut sevi (Embracing Myself)",
     "artist": "Renāte Pagaste, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
   },
   {
-    "name": "S2G1E",
-    "width": 3.5,
-    "height": 2.5,
+    "name": "S2G2E",
+    "width": 1.5,
+    "height": 1.5,
     "wallId": "east",
     "relativeOffset": 0,
     "heightY": 6.8,
-    "imageUrl": "https://i.postimg.cc/MTqs8nH8/a-street-lights-and-buildings-at-night.png",
-    "title": "Street Lights",
-    "artist": "Unknown",
-    "description": "Night."
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/patiesibu-meklejot-1.jpg",
+    "title": "Patiesību meklējot (Searching for Truth)",
+    "artist": "Renāte Pagaste, 2026.",
+    "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
+  },
+  {
+    "name": "S2G3E",
+    "width": 1.5,
+    "height": 1.5,
+    "wallId": "east",
+    "relativeOffset": 0.30,
+    "heightY": 6.8,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/atlaist-kontroli-1.jpg",
+    "title": "Atlaist kontroli (Learning to Let Go)",
+    "artist": "Renāte Pagaste, 2026.",
+    "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
   }
 ]
