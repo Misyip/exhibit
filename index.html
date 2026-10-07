@@ -23,6 +23,36 @@
             touch-action: none;
         }
         
+        /* LOADING SCREEN STYLES */
+        #loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            transition: opacity 3.5s ease;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid #f0c040;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Base UI Layer Styles */
         #ui-layer {
             position: absolute;
@@ -149,6 +179,13 @@
     </style>
 </head>
 <body>
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <h2>Notiek izstādes ielāde...</h2>
+        <p>Lūdzu, uzgaidiet, kamēr mākslas darbi un skulptūras ielādējās.</p>
+    </div>
+
     <canvas id="renderCanvas"></canvas>
     
     <div id="ui-layer">
@@ -182,9 +219,7 @@
             const infoModal = document.getElementById("info-modal");
             const device = getDeviceType();
 
-            // Retain conditional checks for the user device
             if (device === "mobile" || device === "tablet") {
-                // Apply Mobile/Tablet CSS class configuration
                 uiLayer.classList.add("mobile-ui");
                 uiLayer.classList.remove("desktop-ui");
                 infoModal.classList.add("mobile-ui");
@@ -197,7 +232,6 @@
                     <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
                 `;
             } else {
-                // Apply Desktop CSS class configuration
                 uiLayer.classList.add("desktop-ui");
                 uiLayer.classList.remove("mobile-ui");
                 infoModal.classList.add("desktop-ui");
@@ -212,7 +246,6 @@
             }
         }
 
-        // Run on load
         window.addEventListener("DOMContentLoaded", updateUIInstructions);
 
         const canvas = document.getElementById("renderCanvas");
@@ -234,6 +267,23 @@
         let courtyardGroup = null;
         let updateLayout = null;
         let camera = null;
+
+        // LOADING TRACKER VARIABLES
+        let assetsLoadedCount = 0;
+        const totalAssetsToLoad = 2; // 1 for artworks JSON, 1 for sculpture JSON/model
+
+        function checkAllAssetsLoaded() {
+            assetsLoadedCount++;
+            if (assetsLoadedCount >= totalAssetsToLoad) {
+                const loadingScreen = document.getElementById("loading-screen");
+                if (loadingScreen) {
+                    loadingScreen.style.opacity = "0";
+                    setTimeout(() => {
+                        loadingScreen.style.display = "none";
+                    }, 3500); // matches transition duration
+                }
+            }
+        }
 
         let roomConfig = {
             width: 50,
@@ -277,7 +327,7 @@
         };
 
         // DYNAMIC ARTWORK BINDING SYSTEM (Loaded from external source)
-        const loadArtworksFromDatabase = async (scene) => {
+        const loadArtworksFromDatabase = async (scene, isPolling = false) => {
             try {
                 const url = 'https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Gleznas.json';
                 const response = await fetch(url);
@@ -314,14 +364,21 @@
                 if (typeof updateLayout === "function") {
                     updateLayout();
                 }
+
+                if (!isPolling) {
+                    checkAllAssetsLoaded();
+                }
             } catch (error) {
                 console.error("Failed to load artworks from database:", error);
+                if (!isPolling) {
+                    checkAllAssetsLoaded(); // prevent infinite hang if load fails
+                }
             }
         };
 
         // LOAD EXTERNAL GLTF/GLB SCULPTURE FROM JSON CONFIG
         let sculpture = null;
-        const loadSculptureFromDatabase = async (scene) => {
+        const loadSculptureFromDatabase = async (scene, isPolling = false) => {
             try {
                 const url = 'https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/skulptura.json';
                 const response = await fetch(url);
@@ -357,8 +414,15 @@
                 };
                 
                 interactiveArtworks.push(sculpture);
+
+                if (!isPolling) {
+                    checkAllAssetsLoaded();
+                }
             } catch (error) {
                 console.error("Failed to load sculpture from database config:", error);
+                if (!isPolling) {
+                    checkAllAssetsLoaded(); // prevent infinite hang if load fails
+                }
             }
         };
 
