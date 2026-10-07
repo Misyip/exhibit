@@ -61,15 +61,15 @@
   },
   {
     "name": "S1G1E",
-    "width": 3.5,
+    "width": 4.5,
     "height": 2.5,
     "wallId": "east",
     "relativeOffset": 0,
     "heightY": 2.2,
-    "imageUrl": "https://i.postimg.cc/zGQ8d1dj/a-log-cabin-in-the-woods.png",
-    "title": "A Log Cabin in the Woods",
-    "artist": "Unknown",
-    "description": "Green."
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-med-1.jpg",
+    "title": "Aberācijas (Aberations)",
+    "artist": "Stīna Skulme, 2026.",
+    "description": "Audekls, akrils, sausais pastelis. / Acrylic and dry pastel on canvas. / 110 x 120 cm"
   },
   {
     "name": "S2G4N",
