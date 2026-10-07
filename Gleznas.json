@@ -49,15 +49,39 @@
   },
   {
     "name": "S1G1W",
-    "width": 3.5,
-    "height": 2.5,
+    "width": 4.5,
+    "height": 3.5,
     "wallId": "west",
-    "relativeOffset": 0,
+    "relativeOffset": 0.27,
     "heightY": 2.2,
-    "imageUrl": "https://i.postimg.cc/gkD0HQFR/a-mountain-range-with-snow.png",
-    "title": "A Mountain Range with Snow",
-    "artist": "Unknown",
-    "description": "Cold."
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-big-1.jpg",
+    "title": "Aberācijas (Aberations)",
+    "artist": "Stīna Skulme, 2026.",
+    "description": "Audekls, akrils. / Acrylic on canvas. / 180 x 220 cm"
+  },
+  {
+    "name": "S1G2W",
+    "width": 2.0,
+    "height": 1.5,
+    "wallId": "west",
+    "relativeOffset": 0.05,
+    "heightY": 2.2,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small3-1.jpg",
+    "title": "Aberācijas (Aberations)",
+    "artist": "Stīna Skulme, 2026.",
+    "description": "Audekls, akrils, eļļa. / Acrylic and oil on canvas. / 15 x 25 cm"
+  },
+  {
+    "name": "S1G3W",
+    "width": 2.0,
+    "height": 1.5,
+    "wallId": "west",
+    "relativeOffset": -0.27,
+    "heightY": 2.2,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small4-1.jpg",
+    "title": "Aberācijas (Aberations)",
+    "artist": "Stīna Skulme, 2026.",
+    "description": "Audekls, akrils, eļļa. / Acrylic and oil on canvas. / 10 x 15 cm"
   },
   {
     "name": "S1G1E",
