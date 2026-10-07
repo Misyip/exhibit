@@ -71,8 +71,20 @@
     "artist": "Unknown",
     "description": "Green."
   },
-    {
+  {
     "name": "S2G4N",
+    "width": 2.5,
+    "height": 2.3,
+    "wallId": "north",
+    "relativeOffset": -0.25,
+    "heightY": 6.70,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Vietas%20klust-1.jpg",
+    "title": "Vietas kļūst par atmiņu nesējām. Pat tad, kad mājas izzūd, tās turpina dzīvot cilvēku pieredzē, ģimenes stāstos un sajūtā par piederību.",
+    "artist": "Elīna Vagre",
+    "description": "Places become carriers of memory. Even when homes disappear, they continue to live on in people's experiences, family stories, and their sense of belonging."
+  },
+  {
+    "name": "S2G5N",
     "width": 1.5,
     "height": 1.0,
     "wallId": "north",
@@ -82,18 +94,6 @@
     "title": "Ūdensmājas ir stāsts par pieņemšanu - nevis samierināšanos ar zaudējumu, bet spēju turpināt dzīvot apstākļos, kur pārmaiņas ir neizbēgamas.",
     "artist": "Elīna Vagre",
     "description": "Waterhomes is a story about acceptance - not resignation in the face of loss, but the ability to keep living in circumstances where change is inevitable."
-  },
-  {
-    "name": "S2G5N",
-    "width": 2.5,
-    "height": 2.3,
-    "wallId": "north",
-    "relativeOffset": -0.25,
-    "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Vietas%20klust-1.jpg",
-    "title": "Vietas kļūst par atmiņu nesējām. Pat tad, kad mājas izzūd, tās turpina dzīvot cilvēku pieredzē, ģimenes stāstos un sajūtā par piederību.",
-    "artist": "Elīna Vagre",
-    "description": "Places become carriers of memory. Even when homes disappear, they continue to live on in people's experiences, family stories, and their sense of belonging."
   },
   {
     "name": "S2G6N",
