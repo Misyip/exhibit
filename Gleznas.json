@@ -64,12 +64,36 @@
     "width": 4.5,
     "height": 2.5,
     "wallId": "east",
-    "relativeOffset": 0,
+    "relativeOffset": -0.20,
     "heightY": 2.2,
     "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-med-1.jpg",
     "title": "Aberācijas (Aberations)",
     "artist": "Stīna Skulme, 2026.",
     "description": "Audekls, akrils, sausais pastelis. / Acrylic and dry pastel on canvas. / 110 x 120 cm"
+  },
+  {
+    "name": "S1G2E",
+    "width": 1.5,
+    "height": 2.0,
+    "wallId": "east",
+    "relativeOffset": 0,
+    "heightY": 2.2,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small2-1.jpg",
+    "title": "Aberācijas (Aberations)",
+    "artist": "Stīna Skulme, 2026.",
+    "description": "Audekls, akrils, eļļa. / Acrylic and oil on canvas. / 10 x 15 cm"
+  },
+  {
+    "name": "S1G3E",
+    "width": 2.0,
+    "height": 1.5,
+    "wallId": "east",
+    "relativeOffset": 0.15,
+    "heightY": 2.2,
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small1-1.jpg",
+    "title": "Aberācijas (Aberations)",
+    "artist": "Stīna Skulme, 2026.",
+    "description": "Audekls, akrils, eļļa. / Acrylic and oil on canvas. / 10 x 15 cm"
   },
   {
     "name": "S2G4N",
