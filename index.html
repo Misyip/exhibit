@@ -22,41 +22,67 @@
             height: 100%;
             touch-action: none;
         }
+        
+        /* Base UI Layer Styles */
         #ui-layer {
             position: absolute;
             top: 20px;
             left: 20px;
+            right: 20px;
             color: white;
-            background: rgba(0, 0, 0, 0.85);
-            padding: 15px;
-            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.88);
+            border-radius: 12px;
             z-index: 10;
             pointer-events: none;
-        }
-        #ui-layer h2 {
-            margin: 0 0 8px 0;
-            font-size: 1.1rem;
-        }
-        #ui-layer p {
-            margin: 4px 0;
-            font-size: 0.85rem;
-            color: #ccc;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.15);
         }
 
-        /* Bottom Info Modal Panel */
+        /* DESKTOP UI-LAYER SIZES (Edit these for Desktop) */
+        #ui-layer.desktop-ui {
+            max-width: 400px;
+            padding: 15px 18px;
+        }
+        #ui-layer.desktop-ui h2 {
+            margin: 0 0 8px 0;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+        #ui-layer.desktop-ui p {
+            margin: 6px 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #ddd;
+        }
+
+        /* MOBILE / TABLET UI-LAYER SIZES (Edit these for Mobile/Tablet) */
+        #ui-layer.mobile-ui {
+            max-width: 480px;
+            padding: 24px 26px;
+        }
+        #ui-layer.mobile-ui h2 {
+            margin: 0 0 12px 0;
+            font-size: 1.6rem;
+            letter-spacing: 0.5px;
+        }
+        #ui-layer.mobile-ui p {
+            margin: 10px 0;
+            font-size: 1.15rem;
+            line-height: 1.5;
+            color: #ddd;
+        }
+
+        /* Base Info Modal Panel Styles */
         #info-modal {
             position: absolute;
             bottom: 30px;
             left: 50%;
-            width: 90%;
-            max-width: 550px;
-            background: rgba(20, 20, 20, 0.92);
+            background: rgba(20, 20, 20, 0.95);
             color: #fff;
-            padding: 20px 24px;
-            border-radius: 12px;
-            box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7);
-            border: 1px solid #444;
-            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.8);
+            border: 1px solid #555;
+            backdrop-filter: blur(10px);
             z-index: 100;
             box-sizing: border-box;
             transform: translate(-50%, 60px);
@@ -68,23 +94,56 @@
             transform: translate(-50%, 0);
             opacity: 1;
         }
-        #info-modal h3 {
+
+        /* DESKTOP INFO MODAL SIZES (Edit these for Desktop) */
+        #info-modal.desktop-ui {
+            width: 80%;
+            max-width: 500px;
+            padding: 18px 22px;
+        }
+        #info-modal.desktop-ui h3 {
             margin-top: 0;
             color: #f0c040;
-            font-size: 1.25rem;
-            margin-bottom: 2px;
+            font-size: 1.3rem;
+            margin-bottom: 4px;
         }
-        #info-modal h4 {
+        #info-modal.desktop-ui h4 {
             margin: 0 0 10px 0;
-            color: #aaa;
+            color: #bbb;
             font-weight: normal;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-style: italic;
         }
-        #info-modal p {
-            line-height: 1.45;
-            color: #ddd;
-            font-size: 0.88rem;
+        #info-modal.desktop-ui p {
+            line-height: 1.5;
+            color: #eee;
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+
+        /* MOBILE / TABLET INFO MODAL SIZES (Edit these for Mobile/Tablet) */
+        #info-modal.mobile-ui {
+            width: 95%;
+            max-width: 650px;
+            padding: 28px 32px;
+        }
+        #info-modal.mobile-ui h3 {
+            margin-top: 0;
+            color: #f0c040;
+            font-size: 1.65rem;
+            margin-bottom: 6px;
+        }
+        #info-modal.mobile-ui h4 {
+            margin: 0 0 14px 0;
+            color: #bbb;
+            font-weight: normal;
+            font-size: 1.15rem;
+            font-style: italic;
+        }
+        #info-modal.mobile-ui p {
+            line-height: 1.6;
+            color: #eee;
+            font-size: 1.15rem;
             margin-bottom: 0;
         }
     </style>
@@ -94,10 +153,7 @@
     
     <div id="ui-layer">
         <h2>Digitālā izstāde</h2>
-        <p><strong>Spiežot un turot peles klikšķi</strong> var skatīties apkārt.</p>
-        <p><strong>W, A, S, D</strong> vai <strong>bultas</strong>, lai staigātu.</p>
-        <p><strong>Izmantojot peles ritenīti</strong> var pietuvināt kameru.</p>
-        <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju. </p>
+        <div id="ui-instructions"></div>
     </div>
 
     <div id="info-modal">
@@ -107,6 +163,58 @@
     </div>
 
     <script>
+        // DEVICE DETECTION FUNCTION
+        function getDeviceType() {
+            const ua = navigator.userAgent;
+            if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+                return "tablet";
+            }
+            if (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/i.test(ua)) {
+                return "mobile";
+            }
+            return "desktop";
+        }
+
+        // UPDATE UI INSTRUCTIONS AND APPLY DEVICE CSS CLASSES
+        function updateUIInstructions() {
+            const instructionsDiv = document.getElementById("ui-instructions");
+            const uiLayer = document.getElementById("ui-layer");
+            const infoModal = document.getElementById("info-modal");
+            const device = getDeviceType();
+
+            // Retain conditional checks for the user device
+            if (device === "mobile" || device === "tablet") {
+                // Apply Mobile/Tablet CSS class configuration
+                uiLayer.classList.add("mobile-ui");
+                uiLayer.classList.remove("desktop-ui");
+                infoModal.classList.add("mobile-ui");
+                infoModal.classList.remove("desktop-ui");
+
+                instructionsDiv.innerHTML = `
+                    <p><strong>Velciet ar pirkstu pa kreisi vai pa labi</strong>, lai skatītos apkārt.</p>
+                    <p><strong>Velciet ar pirkstu uz augšu vai uz leju</strong>, lai pārvietotos.</p>
+					<p><strong>Velkot ar diviem pirkstiem pa ekrānu</strong> variet skatīties uz visām pusēm.</p>
+                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
+                `;
+            } else {
+                // Apply Desktop CSS class configuration
+                uiLayer.classList.add("desktop-ui");
+                uiLayer.classList.remove("mobile-ui");
+                infoModal.classList.add("desktop-ui");
+                infoModal.classList.remove("mobile-ui");
+
+                instructionsDiv.innerHTML = `
+                    <p><strong>Spiežot un turot peles klikšķi</strong> var skatīties apkārt.</p>
+                    <p><strong>W, A, S, D</strong> vai <strong>bultas</strong>, lai staigātu.</p>
+                    <p><strong>Izmantojot peles ritenīti</strong> var pietuvināt kameru.</p>
+                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
+                `;
+            }
+        }
+
+        // Run on load
+        window.addEventListener("DOMContentLoaded", updateUIInstructions);
+
         const canvas = document.getElementById("renderCanvas");
         const engine = new BABYLON.Engine(canvas, true);
 
@@ -215,7 +323,6 @@
         let sculpture = null;
         const loadSculptureFromDatabase = async (scene) => {
             try {
-                // Change this URL to point to your hosted sculpture JSON file
                 const url = 'https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/skulptura.json';
                 const response = await fetch(url);
                 if (!response.ok) {
@@ -390,7 +497,7 @@
             midFloorMat.backFaceCulling = false;
 
             const stairWallMat = new BABYLON.StandardMaterial("stairWallMat", scene);
-            stairWallMat.diffuseColor = new BABYLON.Color3(87, 87, 87);
+            stairWallMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor);
 
             const midFloorGroup = new BABYLON.TransformNode("midFloorGroup", scene);
             const halfW = roomConfig.width / 2; 
@@ -551,7 +658,7 @@
                 staircaseGroup.rotation.y = Math.PI;
 
                 const stairMat = new BABYLON.StandardMaterial("stairMat", scene);
-                stairMat.diffuseColor = new BABYLON.Color3(0.92, 0.92, 0.92); 
+                stairMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor); 
 
                 const totalHeight = 4.5; 
                 const flightLength = 10;
