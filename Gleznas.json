@@ -6,7 +6,7 @@
     "wallId": "north",
     "relativeOffset": -0.25,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Klatbut-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Klatbut-1.webp",
     "title": "Klātbūtnes svars (Weight of Presence)",
     "artist": "Ina Kantiķe, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 180 x 150 cm"
@@ -18,7 +18,7 @@
     "wallId": "north",
     "relativeOffset": 0,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Palaist%20un%20atgriezties-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Palaist%20un%20atgriezties-1.webp",
     "title": "Palaist un atgriezties (Release and return)",
     "artist": "Renāte Pagaste, 2025.",
     "description": "Audekls, eļļa. / Oil on canvas. / 100 x 100 cm."
@@ -30,7 +30,7 @@
     "wallId": "north",
     "relativeOffset": 0.10,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Zaru%20neironi-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Zaru%20neironi-1.webp",
     "title": "Zaru neironi (Neuronal Branches)",
     "artist": "Renāte Pagaste, 2025.",
     "description": "Audekls, eļļa. / Oil on canvas. / 100 x 100 cm"
@@ -42,7 +42,7 @@
     "wallId": "north",
     "relativeOffset": 0.30,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Aber%C4%81cijas%20pirmais%20stavs-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Aber%C4%81cijas%20pirmais%20stavs-1.webp",
     "title": "Aberācijas (Aberations)",
     "artist": "Stīna Skulme, 2026.",
     "description": "Audekls, akrils. / Acrylic on canvas. / 180 x 220 cm"
@@ -54,7 +54,7 @@
     "wallId": "west",
     "relativeOffset": 0.27,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-big-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-big-1.webp",
     "title": "Aberācijas (Aberations)",
     "artist": "Stīna Skulme, 2026.",
     "description": "Audekls, akrils. / Acrylic on canvas. / 180 x 220 cm"
@@ -66,7 +66,7 @@
     "wallId": "west",
     "relativeOffset": -0.05,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small3-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small3-1.webp",
     "title": "Aberācijas (Aberations)",
     "artist": "Stīna Skulme, 2026.",
     "description": "Audekls, akrils, eļļa. / Acrylic and oil on canvas. / 15 x 25 cm"
@@ -78,7 +78,7 @@
     "wallId": "west",
     "relativeOffset": -0.27,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small4-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small4-1.webp",
     "title": "Aberācijas (Aberations)",
     "artist": "Stīna Skulme, 2026.",
     "description": "Audekls, akrils, eļļa. / Acrylic and oil on canvas. / 10 x 15 cm"
@@ -90,7 +90,7 @@
     "wallId": "east",
     "relativeOffset": 0.27,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-med-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-med-1.webp",
     "title": "Aberācijas (Aberations)",
     "artist": "Stīna Skulme, 2026.",
     "description": "Audekls, akrils, sausais pastelis. / Acrylic and dry pastel on canvas. / 110 x 120 cm"
@@ -102,7 +102,7 @@
     "wallId": "east",
     "relativeOffset": -0.05,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small2-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small2-1.webp",
     "title": "Aberācijas (Aberations)",
     "artist": "Stīna Skulme, 2026.",
     "description": "Audekls, akrils, eļļa. / Acrylic and oil on canvas. / 10 x 15 cm"
@@ -114,7 +114,7 @@
     "wallId": "east",
     "relativeOffset": -0.27,
     "heightY": 2.2,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small1-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/aberacija-small1-1.webp",
     "title": "Aberācijas (Aberations)",
     "artist": "Stīna Skulme, 2026.",
     "description": "Audekls, akrils, eļļa. / Acrylic and oil on canvas. / 10 x 15 cm"
@@ -126,7 +126,7 @@
     "wallId": "north",
     "relativeOffset": -0.25,
     "heightY": 6.80,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Vietas%20klust-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Vietas%20klust-1.webp",
     "title": "Vietas kļūst par atmiņu nesējām. Pat tad, kad mājas izzūd, tās turpina dzīvot cilvēku pieredzē, ģimenes stāstos un sajūtā par piederību.",
     "artist": "Elīna Vagre",
     "description": "Places become carriers of memory. Even when homes disappear, they continue to live on in people's experiences, family stories, and their sense of belonging."
@@ -138,7 +138,7 @@
     "wallId": "north",
     "relativeOffset": -0.31,
     "heightY": 6.50,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/udensmajas-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/udensmajas-1.webp",
     "title": "Ūdensmājas ir stāsts par pieņemšanu - nevis samierināšanos ar zaudējumu, bet spēju turpināt dzīvot apstākļos, kur pārmaiņas ir neizbēgamas.",
     "artist": "Elīna Vagre",
     "description": "Waterhomes is a story about acceptance - not resignation in the face of loss, but the ability to keep living in circumstances where change is inevitable."
@@ -150,7 +150,7 @@
     "wallId": "north",
     "relativeOffset": -0.12,
     "heightY": 6.65,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Biezi-sapno-l-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Biezi-sapno-l-1.webp",
     "title": "Atrasties uz robežas nozīmē sadzīvot ar pastāvīgu nenoteiktību. Ūdensmājas atklāj cilvēku dzīvi vietās, kur jūra nepārtraukti pārzīmē robežu starp zemi un ūdeni.",
     "artist": "Elīna Vagre",
     "description": "To exist on the boundary means living with constant uncertainty. Waterhomes revels the lives of people in places where the sea continuously redraws the boundary between land and water."
@@ -162,7 +162,7 @@
     "wallId": "north",
     "relativeOffset": -0.06,
     "heightY": 6.50,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Biezi-sapno-b-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Biezi-sapno-b-1.webp",
     "title": "Piejūras vide nav tikai dzīvesvieta - tā ir vesels pasaules uztveres veids, kur ikdiena rit līdzās nepārtrauktiem piekrastes pārmaiņām.",
     "artist": "Elīna Vagre",
     "description": "The coastal environment is not merely a place to live - it is an entire way of seeing and experiencing the world, where everyday life unfolds alongside the continuous transformation of the coastline."
@@ -174,7 +174,7 @@
     "wallId": "north",
     "relativeOffset": 0,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Biezi-sapno-r-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Biezi-sapno-r-1.webp",
     "title": "Cilvēki bieži sapņo paši par savu piejūras māju, taču dabas nemitīgais un neatkarīgais ritējums atklāj šo sapņu, kā arī visa cilvēciskā laicīgumu un trauslumu.",
     "artist": "Elīna Vagre",
     "description": "People often dream of having a home by the sea, yet nature's constant and independent course reveals the transience and fragility of these dreams, and of all human existence."
@@ -186,7 +186,7 @@
     "wallId": "north",
     "relativeOffset": 0.20,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Klatbut-s2-left-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Klatbut-s2-left-1.webp",
     "title": "Klātbūtnes svars (Weight of Presence)",
     "artist": "Ina Kantiķe, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 180 x 150 cm"
@@ -198,7 +198,7 @@
     "wallId": "north",
     "relativeOffset": 0.30,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Klatbut-s2-right-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Klatbut-s2-right-1.webp",
     "title": "Klātbūtnes svars (Weight of Presence)",
     "artist": "Ina Kantiķe, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 180 x 150 cm"
@@ -210,7 +210,7 @@
     "wallId": "west",
     "relativeOffset": -0.30,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/atlaist-small-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/atlaist-small-1.webp",
     "title": "Atlaist un atgriezties. (Release and Return)",
     "artist": "Renāte Pagaste, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
@@ -222,7 +222,7 @@
     "wallId": "west",
     "relativeOffset": 0,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/kur-ir-mana-ena-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/kur-ir-mana-ena-1.webp",
     "title": "Kur ir mana ēna (Where is My Shadow?)",
     "artist": "Renāte Pagaste, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
@@ -234,7 +234,7 @@
     "wallId": "west",
     "relativeOffset": 0.30,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/negribu-atlaist-pagatni-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/negribu-atlaist-pagatni-1.webp",
     "title": "Negribu atlaist pagātni (I Don't Want to Let Go of the Past)",
     "artist": "Renāte Pagaste, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
@@ -246,7 +246,7 @@
     "wallId": "east",
     "relativeOffset": -0.30,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/apskaut-sevi-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/apskaut-sevi-1.webp",
     "title": "Apskaut sevi (Embracing Myself)",
     "artist": "Renāte Pagaste, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
@@ -258,7 +258,7 @@
     "wallId": "east",
     "relativeOffset": 0,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/patiesibu-meklejot-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/patiesibu-meklejot-1.webp",
     "title": "Patiesību meklējot (Searching for Truth)",
     "artist": "Renāte Pagaste, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
@@ -270,7 +270,7 @@
     "wallId": "east",
     "relativeOffset": 0.30,
     "heightY": 6.8,
-    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/atlaist-kontroli-1.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/atlaist-kontroli-1.webp",
     "title": "Atlaist kontroli (Learning to Let Go)",
     "artist": "Renāte Pagaste, 2026.",
     "description": "Audekls, eļļa. / Oil on canvas. / 30 x 30 cm"
