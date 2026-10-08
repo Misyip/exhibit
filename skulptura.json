@@ -1,22 +1,13 @@
-{
-  "modelUrl": "https://raw.githubusercontent.com/Misyip/exhibit/main/skulptura.glb",
-  "title": "Viesis",
-  "artist": "Solveiga Vasiļjeva, 2020.",
-  "description": "Senas Ēģiptes skulptūras iedvesmots, šis darbs pievēršas dzīvības izcelšanās, civilizāciju attīstības un gēnu inženierijas jautājumiem. Tas ievada tēmā 'Jaunās eksistences formas', ko raksturo bioloģiski tehniskas būtnes - ne augi, ne dzīvnieki vai cilvēki, kas veido paralēlu pasauli un, iespējams, ir mūsu nākotne.",
-  "triggerDistance": 6.5,
-  "position": {
-    "x": 0,
-    "y": 0.85,
-    "z": -30.5
-  },
-  "scaling": {
-    "x": 2.5,
-    "y": 2.5,
-    "z": 2.5
-  },
-  "rotation": {
-    "x": 0,
-    "y": 0,
-    "z": 0
+[
+  {
+    "name": "Skulpt1",
+    "title": "Viesis",
+    "artist": "Solveviga Vasiļjeva",
+    "description": "Senas Ēģiptes skulptūras iedvesmots, šis darbs pievēršas dzīvības izcelšanās, civilizāciju attīstības un gēnu inženierijas jautājumiem. Tas ievada tēmā 'Jaunās eksistences formas', ko raksturo bioloģiski tehniskas būtnes - ne augi, ne dzīvnieki vai cilvēki, kas veido paralēlu pasauli un, iespējams, ir mūsu nākotne. Mākslai un zinātnei ir spēja intuitīvi tuvoties Visuma noslēpumiem. Objekts eksponēts par godu tēlnieces Līvijas Rezevskas simtgadei. Arī viņa savos darbos iemūžināja universālas civilizācijas vērtības, kas, spītējot padomju cenzūrai, spēja izdzīvot Latvijas mākslā.",
+    "modelUrl": "https://raw.githubusercontent.com/Misyip/exhibit/main/skulptura.glb",
+    "position": { "x": 0, "y": 0, "z": 2 },
+    "rotation": { "x": 0, "y": 0, "z": 0 },
+    "scaling": { "x": 1.5, "y": 1.5, "z": 1.5 },
+    "triggerDistance": 6.5
   }
-}
+]
