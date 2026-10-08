@@ -448,10 +448,11 @@
             scene.gravity = new BABYLON.Vector3(0, -0.05, 0); 
             scene.collisionsEnabled = true; 
 
-            // 4. FIRST-PERSON CAMERA
+            // 4. FIRST-PERSON CAMERA & SMOOTH ZOOM
             const minFov = 0.25; 
             const maxFov = 1.30; 
             const zoomSensitivity = 0.0015;
+            let targetFov = maxFov; // Target FOV for smooth lerping
 
             camera = new BABYLON.UniversalCamera("visitorCamera", new BABYLON.Vector3(8, 1.6, -2), scene);
             camera.attachControl(canvas, true);
@@ -473,8 +474,8 @@
                     const event = pointerInfo.event;
                     const delta = event.deltaY;
                     
-                    camera.fov += delta * zoomSensitivity;
-                    camera.fov = Math.max(minFov, Math.min(maxFov, camera.fov));
+                    targetFov += delta * zoomSensitivity;
+                    targetFov = Math.max(minFov, Math.min(maxFov, targetFov));
                 }
             });
 
@@ -533,7 +534,7 @@
 
             // INTERMEDIATE FLOOR DIVIDER & MIDFLOOR RAILING
             const midFloorMat = new BABYLON.StandardMaterial("midFloorMat", scene);
-            midFloorMat.diffuseColor = BABYLON.Color3.FromHexString("#575757");
+            midFloorMat.diffuseColor = BABYLON.Color3.FromHexString("#141313");
             midFloorMat.backFaceCulling = false;
 
             const stairWallMat = new BABYLON.StandardMaterial("stairWallMat", scene);
@@ -1021,6 +1022,9 @@
             // VISIBILITY, PROXIMITY & THUMBNAIL LOADING LOOP
             scene.onBeforeRenderObservable.add(() => {
                 
+                // Smoothly interpolate camera FOV towards targetFov every frame
+                camera.fov += (targetFov - camera.fov) * 0.15;
+
                 // 1. If an artwork's info is currently shown, handle its exit tracking
                 if (activeArtwork) {
                     const currentDist = BABYLON.Vector3.Distance(camera.position, activeArtwork.getAbsolutePosition());
