@@ -183,7 +183,7 @@
     <div id="loading-screen">
         <div class="spinner"></div>
         <h2>Notiek izstādes ielāde...</h2>
-        <p>Lūdzu, uzgaidiet, kamēr mākslas darbi un skulptūras ielādējās.</p>
+        <p>Lūdzu, uzgaidiet, kamēr mākslas darbi ielādējas.</p>
     </div>
 
     <canvas id="renderCanvas"></canvas>
@@ -268,9 +268,36 @@
         let updateLayout = null;
         let camera = null;
 
+        // IN-MEMORY TEXTURE CACHE
+        const textureCache = {};
+
+        // HELPER FUNCTION: Downscale any image URL onto a tiny canvas to create a lightweight texture on the fly
+        const createThumbnailTexture = (url, scene, targetWidth = 1024, callback) => {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = url;
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const aspectRatio = img.height / img.width;
+                canvas.width = targetWidth;
+                canvas.height = Math.round(targetWidth * aspectRatio);
+                
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                const thumbTexture = new BABYLON.DynamicTexture(url + "_thumb", canvas, scene, false);
+                thumbTexture.update();
+
+                callback(thumbTexture);
+            };
+            img.onerror = () => {
+                callback(new BABYLON.Texture(url, scene));
+            };
+        };
+
         // LOADING TRACKER VARIABLES
         let assetsLoadedCount = 0;
-        const totalAssetsToLoad = 2; // 1 for artworks JSON, 1 for sculpture JSON/model
+        const totalAssetsToLoad = 1; // 1 for artworks JSON
 
         function checkAllAssetsLoaded() {
             assetsLoadedCount++;
@@ -326,8 +353,8 @@
             activeArtwork = null;
         };
 
-        // DYNAMIC ARTWORK BINDING SYSTEM (Loaded from external source)
-        const loadArtworksFromDatabase = async (scene, isPolling = false) => {
+        // DYNAMIC ARTWORK BINDING SYSTEM (Loaded once from external source)
+        const loadArtworksFromDatabase = async (scene) => {
             try {
                 const url = 'https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Gleznas.json';
                 const response = await fetch(url);
@@ -336,6 +363,7 @@
                 }
                 
                 const artworksData = await response.json();
+
                 artworksData.forEach(data => {
                     const art = BABYLON.MeshBuilder.CreatePlane(data.name, {
                         width: data.width, 
@@ -343,7 +371,7 @@
                     }, scene);
                     
                     const artMat = new BABYLON.StandardMaterial(data.name + "Mat", scene);
-                    artMat.diffuseTexture = new BABYLON.Texture(data.imageUrl, scene);
+                    
                     artMat.emissiveColor = new BABYLON.Color3(0.1, 0.1, 0.1);
                     artMat.backFaceCulling = false;
                     art.material = artMat;
@@ -355,7 +383,9 @@
                         wallId: data.wallId,
                         relativeOffset: data.relativeOffset,
                         heightY: data.heightY,
-                        triggerDistance: 5.0
+                        triggerDistance: 5.0,
+                        imageUrl: data.imageUrl, 
+                        isLoaded: false
                     };
 
                     interactiveArtworks.push(art);
@@ -365,59 +395,10 @@
                     updateLayout();
                 }
 
-                if (!isPolling) {
-                    checkAllAssetsLoaded();
-                }
+                checkAllAssetsLoaded();
             } catch (error) {
                 console.error("Failed to load artworks from database:", error);
-                if (!isPolling) {
-                    checkAllAssetsLoaded(); // prevent infinite hang if load fails
-                }
-            }
-        };
-
-        // LOAD EXTERNAL GLTF/GLB SCULPTURE FROM JSON CONFIG
-        let sculpture = null;
-        const loadSculptureFromDatabase = async (scene, isPolling = false) => {
-            try {
-                const url = 'https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/skulptura.json';
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-
-                const result = await BABYLON.SceneLoader.ImportMeshAsync("", data.modelUrl, "", scene);
-                sculpture = result.meshes[0]; 
-                
-                if (data.position) {
-                    sculpture.position = new BABYLON.Vector3(data.position.x, data.position.y, data.position.z);
-                }
-                if (data.scaling) {
-                    sculpture.scaling = new BABYLON.Vector3(data.scaling.x, data.scaling.y, data.scaling.z);
-                }
-                if (data.rotation) {
-                    sculpture.rotation = new BABYLON.Vector3(data.rotation.x, data.rotation.y, data.rotation.z);
-                }
-
-                sculpture.metadata = {
-                    title: data.title,
-                    artist: data.artist,
-                    description: data.description,
-                    triggerDistance: data.triggerDistance || 4.5
-                };
-                
-                interactiveArtworks.push(sculpture);
-
-                if (!isPolling) {
-                    checkAllAssetsLoaded();
-                }
-            } catch (error) {
-                console.error("Failed to load sculpture from database config:", error);
-                if (!isPolling) {
-                    checkAllAssetsLoaded(); // prevent infinite hang if load fails
-                }
+                checkAllAssetsLoaded(); 
             }
         };
 
@@ -965,15 +946,8 @@
 
             createCourtyard();
 
-            // Initial load of artworks & sculpture dynamically inside the scene lifecycle
-            loadArtworksFromDatabase(scene, false);
-            loadSculptureFromDatabase(scene, false);
-
-            // POLLING INTERVAL: Check for JSON changes every 15 seconds (15000 ms)
-            setInterval(() => {
-                loadArtworksFromDatabase(scene, true);
-                loadSculptureFromDatabase(scene, true);
-            }, 15000);
+            // Load artworks from database once at startup
+            loadArtworksFromDatabase(scene);
 			
             // ROOM LAYOUT RECALCULATION
             updateLayout = () => {
@@ -1033,8 +1007,6 @@
                 });
             };
 
-            updateLayout();
-
             camera.setTarget(new BABYLON.Vector3(camera.position.x, camera.position.y, camera.position.z + 10));
 
             const isMeshInView = (mesh) => {
@@ -1042,12 +1014,14 @@
                 return mesh.isInFrustum(frustumPlanes);
             };
 
-            // VISIBILITY & PROXIMITY CHECKING LOOP
-            scene.onBeforeRenderObservable.add(() => {
-                if (sculpture) {
-                    sculpture.rotation.y += 0.00; // Optional rotation animation
-                }
+            // LOADING DISTANCE THRESHOLDS
+            const loadDistance = 15.0;   // Distance to generate/load the thumbnail canvas
+            const unloadDistance = 15.0; // Distance to clean up memory when walking away
 
+            // VISIBILITY, PROXIMITY & THUMBNAIL LOADING LOOP
+            scene.onBeforeRenderObservable.add(() => {
+                
+                // 1. If an artwork's info is currently shown, handle its exit tracking
                 if (activeArtwork) {
                     const currentDist = BABYLON.Vector3.Distance(camera.position, activeArtwork.getAbsolutePosition());
                     const exitThreshold = activeArtwork.metadata.triggerDistance + 1.2;
@@ -1056,16 +1030,41 @@
                     if (currentDist > exitThreshold || !inView) {
                         hideArtworkInfo();
                     }
-                    return;
                 }
 
+                // 2. Iterate through all artworks for Thumbnail-only Loading & Proximity UI logic
                 for (const art of interactiveArtworks) {
                     const dist = BABYLON.Vector3.Distance(camera.position, art.getAbsolutePosition());
-                    const inView = isMeshInView(art);
 
-                    if (dist < art.metadata.triggerDistance && inView) {
-                        showArtworkInfo(art);
-                        break;
+                    // --- SINGLE-TIER THUMBNAIL LOADING LOGIC ---
+                    if (dist < loadDistance && !art.metadata.isLoaded) {
+                        art.metadata.isLoaded = true;
+                        
+                        const thumbKey = art.metadata.imageUrl + "_thumb";
+                        if (!textureCache[thumbKey]) {
+                            createThumbnailTexture(art.metadata.imageUrl, scene, 1024, (tex) => {
+                                textureCache[thumbKey] = tex;
+                                if (art.metadata.isLoaded) {
+                                    art.material.diffuseTexture = tex;
+                                }
+                            });
+                        } else {
+                            art.material.diffuseTexture = textureCache[thumbKey];
+                        }
+                    } 
+
+                    // --- UNLOAD WHEN FAR AWAY ---
+                    if (dist > unloadDistance && art.metadata.isLoaded) {
+                        art.material.diffuseTexture = null;
+                        art.metadata.isLoaded = false;
+                    }
+
+                    // --- PROXIMITY UI LOGIC ---
+                    if (!activeArtwork) {
+                        const inView = isMeshInView(art);
+                        if (dist < art.metadata.triggerDistance && inView) {
+                            showArtworkInfo(art);
+                        }
                     }
                 }
             });
