@@ -762,12 +762,12 @@
             horizontalMullionBottomRight.checkCollisions = true;
 
             // Vertical End Pillars for the South Glass Wall Frame
-            const pillarLeft = BABYLON.MeshBuilder.CreateBox("pillarLeft", {width: 0.12, height: roomConfig.wallHeight, depth: 0.55}, scene);
+            const pillarLeft = BABYLON.MeshBuilder.CreateBox("pillarLeft", {width: 0.49, height: roomConfig.wallHeight, depth: 0.55}, scene);
             pillarLeft.position.set(-halfW, roomConfig.wallHeight / 2, -roomConfig.depth / 2);
             pillarLeft.material = mullionMat;
             pillarLeft.checkCollisions = true;
 
-            const pillarRight = BABYLON.MeshBuilder.CreateBox("pillarRight", {width: 0.12, height: roomConfig.wallHeight, depth: 0.55}, scene);
+            const pillarRight = BABYLON.MeshBuilder.CreateBox("pillarRight", {width: 0.49, height: roomConfig.wallHeight, depth: 0.55}, scene);
             pillarRight.position.set(halfW, roomConfig.wallHeight / 2, -roomConfig.depth / 2);
             pillarRight.material = mullionMat;
             pillarRight.checkCollisions = true;
