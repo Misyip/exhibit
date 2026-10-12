@@ -552,9 +552,14 @@
 
             createRoof();
 
-            const midFloorMat = new BABYLON.StandardMaterial("midFloorMat", scene);
-            midFloorMat.diffuseColor = BABYLON.Color3.FromHexString("#141313");
-            midFloorMat.backFaceCulling = false;
+            // MidFloor Materials: Top is gray (#575757), Bottom is black (#141313)
+            const midFloorTopMat = new BABYLON.StandardMaterial("midFloorTopMat", scene);
+            midFloorTopMat.diffuseColor = BABYLON.Color3.FromHexString("#575757");
+            midFloorTopMat.backFaceCulling = false;
+
+            const midFloorBottomMat = new BABYLON.StandardMaterial("midFloorBottomMat", scene);
+            midFloorBottomMat.diffuseColor = BABYLON.Color3.FromHexString("#141313");
+            midFloorBottomMat.backFaceCulling = false;
 
             const stairWallMat = new BABYLON.StandardMaterial("stairWallMat", scene);
             stairWallMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor);
@@ -570,27 +575,51 @@
             const midCenterZ = (innerMinZ + innerMaxZ) / 2; 
 
             const leftWidth = 10;
-            const midFloorLeft = BABYLON.MeshBuilder.CreateGround("midFloorLeft", {width: leftWidth, height: exactMidDepth}, scene);
-            midFloorLeft.position.set(-halfW + leftWidth / 2, 4.5, midCenterZ);
-            midFloorLeft.checkCollisions = true;
-            midFloorLeft.material = midFloorMat;
-            midFloorLeft.parent = midFloorGroup;
+            // Left Top Surface (Gray)
+            const midFloorLeftTop = BABYLON.MeshBuilder.CreateGround("midFloorLeftTop", {width: leftWidth, height: exactMidDepth}, scene);
+            midFloorLeftTop.position.set(-halfW + leftWidth / 2, 4.5, midCenterZ);
+            midFloorLeftTop.checkCollisions = true;
+            midFloorLeftTop.material = midFloorTopMat;
+            midFloorLeftTop.parent = midFloorGroup;
+            // Left Bottom Surface (Black when looking up)
+            const midFloorLeftBottom = BABYLON.MeshBuilder.CreateGround("midFloorLeftBottom", {width: leftWidth, height: exactMidDepth}, scene);
+            midFloorLeftBottom.position.set(-halfW + leftWidth / 2, 4.49, midCenterZ);
+            midFloorLeftBottom.rotation.x = Math.PI;
+            midFloorLeftBottom.checkCollisions = false;
+            midFloorLeftBottom.material = midFloorBottomMat;
+            midFloorLeftBottom.parent = midFloorGroup;
 
             const rightWidth = 30;
-            const midFloorRight = BABYLON.MeshBuilder.CreateGround("midFloorRight", {width: rightWidth, height: exactMidDepth}, scene);
-            midFloorRight.position.set(-5 + rightWidth / 2, 4.5, midCenterZ);
-            midFloorRight.checkCollisions = true;
-            midFloorRight.material = midFloorMat;
-            midFloorRight.parent = midFloorGroup;
+            // Right Top Surface (Gray)
+            const midFloorRightTop = BABYLON.MeshBuilder.CreateGround("midFloorRightTop", {width: rightWidth, height: exactMidDepth}, scene);
+            midFloorRightTop.position.set(-5 + rightWidth / 2, 4.5, midCenterZ);
+            midFloorRightTop.checkCollisions = true;
+            midFloorRightTop.material = midFloorTopMat;
+            midFloorRightTop.parent = midFloorGroup;
+            // Right Bottom Surface (Black when looking up)
+            const midFloorRightBottom = BABYLON.MeshBuilder.CreateGround("midFloorRightBottom", {width: rightWidth, height: exactMidDepth}, scene);
+            midFloorRightBottom.position.set(-5 + rightWidth / 2, 4.49, midCenterZ);
+            midFloorRightBottom.rotation.x = Math.PI;
+            midFloorRightBottom.checkCollisions = false;
+            midFloorRightBottom.material = midFloorBottomMat;
+            midFloorRightBottom.parent = midFloorGroup;
 
             const northWidth = 10;
             const stairMeetingZ = -4.3; 
             const northDepth = innerMaxZ - stairMeetingZ;
-            const midFloorNorth = BABYLON.MeshBuilder.CreateGround("midFloorNorth", {width: northWidth, height: northDepth}, scene);
-            midFloorNorth.position.set(-10, 4.5, stairMeetingZ + northDepth / 2);
-            midFloorNorth.checkCollisions = true;
-            midFloorNorth.material = midFloorMat;
-            midFloorNorth.parent = midFloorGroup;
+            // North Top Surface (Gray)
+            const midFloorNorthTop = BABYLON.MeshBuilder.CreateGround("midFloorNorthTop", {width: northWidth, height: northDepth}, scene);
+            midFloorNorthTop.position.set(-10, 4.5, stairMeetingZ + northDepth / 2);
+            midFloorNorthTop.checkCollisions = true;
+            midFloorNorthTop.material = midFloorTopMat;
+            midFloorNorthTop.parent = midFloorGroup;
+            // North Bottom Surface (Black when looking up)
+            const midFloorNorthBottom = BABYLON.MeshBuilder.CreateGround("midFloorNorthBottom", {width: northWidth, height: northDepth}, scene);
+            midFloorNorthBottom.position.set(-10, 4.49, stairMeetingZ + northDepth / 2);
+            midFloorNorthBottom.rotation.x = Math.PI;
+            midFloorNorthBottom.checkCollisions = false;
+            midFloorNorthBottom.material = midFloorBottomMat;
+            midFloorNorthBottom.parent = midFloorGroup;
 
             const midFloorConnectorRail = BABYLON.MeshBuilder.CreateBox("midFloorConnectorRail", {width: 2.2, height: 1.1, depth: 0.15}, scene);
             midFloorConnectorRail.position.set(-5.07, 3.93 + 1.1, -5.4);
@@ -699,6 +728,49 @@
             horizontalMullion.position.set(0, 4.5, -roomConfig.depth / 2);
             horizontalMullion.material = mullionMat;
             horizontalMullion.checkCollisions = true;
+
+            // Added Black Horizontal Mullion at the Top of the South Glass Wall
+            const horizontalMullionTop = BABYLON.MeshBuilder.CreateBox("horizontalMullionTop", {
+                width: roomConfig.width, 
+                height: 0.18, 
+                depth: 0.55
+            }, scene);
+            horizontalMullionTop.position.set(0, roomConfig.wallHeight - 0.09, -roomConfig.depth / 2);
+            horizontalMullionTop.material = mullionMat;
+            horizontalMullionTop.checkCollisions = true;
+
+            // Split Bottom Black Horizontal Mullions for Each Side of the Doorway
+            const leftBottomMullionWidth = doorMinX - (-halfW);
+            const rightBottomMullionWidth = halfW - doorMaxX;
+
+            const horizontalMullionBottomLeft = BABYLON.MeshBuilder.CreateBox("horizontalMullionBottomLeft", {
+                width: leftBottomMullionWidth, 
+                height: 0.18, 
+                depth: 0.55
+            }, scene);
+            horizontalMullionBottomLeft.position.set(-halfW + leftBottomMullionWidth / 2, 0.09, -roomConfig.depth / 2);
+            horizontalMullionBottomLeft.material = mullionMat;
+            horizontalMullionBottomLeft.checkCollisions = true;
+
+            const horizontalMullionBottomRight = BABYLON.MeshBuilder.CreateBox("horizontalMullionBottomRight", {
+                width: rightBottomMullionWidth, 
+                height: 0.18, 
+                depth: 0.55
+            }, scene);
+            horizontalMullionBottomRight.position.set(halfW - rightBottomMullionWidth / 2, 0.09, -roomConfig.depth / 2);
+            horizontalMullionBottomRight.material = mullionMat;
+            horizontalMullionBottomRight.checkCollisions = true;
+
+            // Vertical End Pillars for the South Glass Wall Frame
+            const pillarLeft = BABYLON.MeshBuilder.CreateBox("pillarLeft", {width: 0.12, height: roomConfig.wallHeight, depth: 0.55}, scene);
+            pillarLeft.position.set(-halfW, roomConfig.wallHeight / 2, -roomConfig.depth / 2);
+            pillarLeft.material = mullionMat;
+            pillarLeft.checkCollisions = true;
+
+            const pillarRight = BABYLON.MeshBuilder.CreateBox("pillarRight", {width: 0.12, height: roomConfig.wallHeight, depth: 0.55}, scene);
+            pillarRight.position.set(halfW, roomConfig.wallHeight / 2, -roomConfig.depth / 2);
+            pillarRight.material = mullionMat;
+            pillarRight.checkCollisions = true;
 
             const entranceZ = -roomConfig.depth / 2;
             const doorFrameLeft = BABYLON.MeshBuilder.CreateBox("doorFrameLeft", {width: 0.15, height: doorHeight, depth: 0.6}, scene);
