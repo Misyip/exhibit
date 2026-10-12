@@ -21,6 +21,7 @@
             width: 100%;
             height: 100%;
             touch-action: none;
+            outline: none;
         }
         
         /* LOADING SCREEN STYLES */
@@ -58,14 +59,64 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            right: 20px;
             color: white;
             background: rgba(0, 0, 0, 0.88);
             border-radius: 12px;
             z-index: 10;
-            pointer-events: none;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.15);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        #ui-layer.hidden {
+            transform: translateX(-120%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .ui-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ui-hide-btn, #ui-show-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            cursor: pointer;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+            pointer-events: auto;
+        }
+
+        .ui-hide-btn:hover, #ui-show-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        #ui-show-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 9;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: translateX(-20px);
+        }
+
+        #ui-show-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
         }
 
         /* DESKTOP UI-LAYER SIZES (Edit these for Desktop) */
@@ -74,7 +125,7 @@
             padding: 15px 18px;
         }
         #ui-layer.desktop-ui h2 {
-            margin: 0 0 8px 0;
+            margin: 0;
             font-size: 1.2rem;
             letter-spacing: 0.5px;
         }
@@ -91,7 +142,7 @@
             padding: 24px 26px;
         }
         #ui-layer.mobile-ui h2 {
-            margin: 0 0 12px 0;
+            margin: 0;
             font-size: 1.6rem;
             letter-spacing: 0.5px;
         }
@@ -186,11 +237,18 @@
         <p id="loading-status">Lūdzu, uzgaidiet, kamēr mākslas darbi ielādējas...</p>
     </div>
 
-    <canvas id="renderCanvas"></canvas>
+    <canvas id="renderCanvas" tabindex="1"></canvas>
     
+    <!-- SHOW BUTTON (Left Corner) -->
+    <button id="ui-show-btn" onclick="showUI()" title="Parādīt instrukcijas">></button>
+
+    <!-- INSTRUCTION UI LAYER -->
     <div id="ui-layer">
-        <h2>Digitālā izstāde</h2>
-        <div id="ui-instructions"></div>
+        <div class="ui-header">
+            <h2>Digitālā izstāde</h2>
+            <button class="ui-hide-btn" onclick="hideUI()" title="Paslēpt instrukcijas"><</button>
+        </div>
+        <div id="ui-instructions" style="margin-top: 10px;"></div>
     </div>
 
     <div id="info-modal">
@@ -200,6 +258,29 @@
     </div>
 
     <script>
+        const canvas = document.getElementById("renderCanvas");
+
+        // UI HIDE / UNHIDE FUNCTIONS WITH CANVAS FOCUS RESTORATION
+        function hideUI() {
+            const uiLayer = document.getElementById("ui-layer");
+            const showBtn = document.getElementById("ui-show-btn");
+            uiLayer.classList.add("hidden");
+            showBtn.classList.add("visible");
+            if (canvas) {
+                canvas.focus();
+            }
+        }
+
+        function showUI() {
+            const uiLayer = document.getElementById("ui-layer");
+            const showBtn = document.getElementById("ui-show-btn");
+            uiLayer.classList.remove("hidden");
+            showBtn.classList.remove("visible");
+            if (canvas) {
+                canvas.focus();
+            }
+        }
+
         // DEVICE DETECTION FUNCTION
         function getDeviceType() {
             const ua = navigator.userAgent;
@@ -248,7 +329,6 @@
 
         window.addEventListener("DOMContentLoaded", updateUIInstructions);
 
-        const canvas = document.getElementById("renderCanvas");
         const engine = new BABYLON.Engine(canvas, true);
 
         // UI Modal Elements
