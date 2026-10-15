@@ -585,6 +585,7 @@
             
             const groundMat = new BABYLON.StandardMaterial("floorMat", scene);
             groundMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor);
+			groundMat.specularColor = new BABYLON.Color3(0, 0, 0);
             groundMesh.material = groundMat;
             surfaceMaterials.floor = groundMat;
 
@@ -636,6 +637,7 @@
             const midFloorTopMat = new BABYLON.StandardMaterial("midFloorTopMat", scene);
             midFloorTopMat.diffuseColor = BABYLON.Color3.FromHexString("#575757");
             midFloorTopMat.backFaceCulling = false;
+			midFloorTopMat.specularColor = new BABYLON.Color3(0, 0, 0);
 
             const midFloorBottomMat = new BABYLON.StandardMaterial("midFloorBottomMat", scene);
             midFloorBottomMat.diffuseColor = BABYLON.Color3.FromHexString("#141313");
@@ -878,7 +880,8 @@
                 staircaseGroup.rotation.y = Math.PI;
 
                 const stairMat = new BABYLON.StandardMaterial("stairMat", scene);
-                stairMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor); 
+                stairMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor);
+				stairMat.specularColor = new BABYLON.Color3(0, 0, 0);
 
                 const totalHeight = 4.5; 
                 const flightLength = 10;
