@@ -459,6 +459,7 @@
                     
                     const artMat = new BABYLON.StandardMaterial(data.name + "Mat", scene);
                     artMat.emissiveColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+					artMat.specularColor = new BABYLON.Color3(0, 0, 0);
                     artMat.backFaceCulling = false;
                     art.material = artMat;
 
@@ -539,7 +540,7 @@
 
             // 2. LIGHTING
             const ambientLight = new BABYLON.HemisphericLight("ambientLight", new BABYLON.Vector3(0, 1, 0), scene);
-            ambientLight.intensity = 0.8;
+            ambientLight.intensity = 1.0;
             
             const sunLight = new BABYLON.DirectionalLight("sunLight", new BABYLON.Vector3(-0.4, -0.8, -0.6), scene);
             sunLight.intensity = 0.9;
@@ -585,7 +586,8 @@
             
             const groundMat = new BABYLON.StandardMaterial("floorMat", scene);
             groundMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor);
-			groundMat.specularColor = new BABYLON.Color3(0, 0, 0);
+			groundMat.specularColor = new BABYLON.Color3(0.25, 0.25, 0.25);
+			groundMat.specularPower = 16;
             groundMesh.material = groundMat;
             surfaceMaterials.floor = groundMat;
 
