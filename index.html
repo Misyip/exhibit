@@ -730,6 +730,7 @@
                 
                 const mat = new BABYLON.StandardMaterial(`wallMat_${wallId}`, scene);
                 mat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors[wallId] || "#575757");
+				mat.specularColor = new BABYLON.Color3(0, 0, 0);
 
                 wall.material = mat;
                 surfaceMaterials[wallId] = mat;
