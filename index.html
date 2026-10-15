@@ -94,7 +94,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
-            transition: background 0.2s;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
             pointer-events: auto;
         }
 
@@ -109,7 +109,7 @@
             z-index: 9;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
             transform: translateX(-20px);
         }
 
