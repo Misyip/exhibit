@@ -310,7 +310,10 @@
 
         // GYROSCOPE CONTROL VARIABLES
         let gyroEnabled = false;
-        let initialAlpha = null;
+        
+        // Offset variables for recentering
+        let baseAlpha = null;
+        let baseBeta = null;
 
         async function toggleGyroscope() {
             const btn = document.getElementById("gyro-toggle-btn");
@@ -326,23 +329,34 @@
                     // iOS 13+ explicit permission request
                     const response = await DeviceOrientationEvent.requestPermission();
                     if (response === 'granted') {
-                        activateGyro();
+                        handleGyroToggleAction();
                     } else {
                         alert("Žiroskopa piekļuve tika liegta. Ja nospiedāt 'Liegt', lūdzu, pārbaudiet Safari iestatījumus (Safari -> Atļaut piekļuvi kustības sensoriem).");
                     }
                 } else {
                     // Standard devices (Android, Chrome, Firefox)
-                    activateGyro();
+                    handleGyroToggleAction();
                 }
             } catch (err) {
                 console.error("Gyroscope permission error:", err);
+                handleGyroToggleAction();
+            }
+        }
+
+        function handleGyroToggleAction() {
+            if (!gyroEnabled) {
                 activateGyro();
+            } else {
+                // If already enabled, pressing it again recenters the view instead of turning it off
+                recenterGyro();
             }
         }
 
         function activateGyro() {
             gyroEnabled = true;
-            initialAlpha = null;
+            baseAlpha = null; // Will be captured on the first sensor frame
+            baseBeta = null;
+
             const btn = document.getElementById("gyro-toggle-btn");
             if (btn) {
                 btn.textContent = "✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.";
@@ -355,7 +369,7 @@
                 }
             }
 
-            // Completely remove touch pointer rotation so dragging/panning the screen does nothing, while preserving movement
+            // Remove touch pointer rotation so dragging/panning does nothing, while preserving movement
             if (camera && camera.inputs) {
                 if (camera.inputs.attached.pointers) {
                     camera.inputs.remove(camera.inputs.attached.pointers);
@@ -365,24 +379,57 @@
             window.addEventListener("deviceorientation", handleOrientation, true);
         }
 
+        function recenterGyro() {
+            // Reset base orientation triggers to current live sensor values on next event frame
+            baseAlpha = null;
+            baseBeta = null;
+            
+            const btn = document.getElementById("gyro-toggle-btn");
+            if (btn) {
+                const originalText = btn.textContent;
+                btn.textContent = "✓ Skats nocentrēts!";
+                setTimeout(() => {
+                    if (gyroEnabled) {
+                        btn.textContent = "✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.";
+                    }
+                }, 1000);
+            }
+        }
+
         function handleOrientation(event) {
             if (!gyroEnabled || !camera) return;
 
-            // Invert alpha (yaw/compass) and gamma (roll/side tilt) to fix left/right inversion
-            const alpha = event.alpha ? -BABYLON.Tools.ToRadians(event.alpha) : 0;
-            const beta = event.beta ? BABYLON.Tools.ToRadians(event.beta) : 0;
-            // Invert gamma to fix up/down inversion
-            const gamma = event.gamma ? BABYLON.Tools.ToRadians(event.gamma) : 0;
+            const alpha = event.alpha ? event.alpha : 0;
+            const beta = event.beta ? event.beta : 0;
+
+            // Initialize or capture new baselines upon recentering or startup
+            if (baseAlpha === null || baseBeta === null) {
+                baseAlpha = alpha;
+                baseBeta = beta;
+            }
+
+            // Calculate relative offset angles from the center baseline
+            let deltaAlpha = alpha - baseAlpha;
+            let deltaBeta = beta - baseBeta;
+
+            // Normalize deltaAlpha to stay within -180 to 180 degrees
+            if (deltaAlpha > 180) deltaAlpha -= 360;
+            if (deltaAlpha < -180) deltaAlpha += 360;
+
+            // Map to radians with correct sign adjustments (roll / gamma is omitted entirely to prevent banking/tilt roll)
+            const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
+            const radBeta = BABYLON.Tools.ToRadians(deltaBeta);
 
             if (!camera.rotationQuaternion) {
                 camera.rotationQuaternion = camera.rotation.toQuaternion();
             }
 
             let rotMatrix = new BABYLON.Matrix();
+            // Pass 0 for roll (gamma) to completely remove camera roll
             BABYLON.Matrix.RotationYawPitchRollToRef(
-                alpha, 
-                beta - Math.PI / 4, 
-                gamma, 
+                radAlpha, 
+                radBeta + Math.PI / 4, 
+                0, 
                 rotMatrix
             );
 
@@ -419,7 +466,7 @@
                 uiLayer.classList.add("desktop-ui");
                 uiLayer.classList.remove("mobile-ui");
                 infoModal.classList.add("desktop-ui");
-                infoModal.classList.remove("mobile-ui");
+                infoModal.classList.remove("desktop-ui");
 
                 instructionsDiv.innerHTML = `
                     <p><strong>Spiežot un turot peles klikšķi</strong> var skatīties apkārt.</p>
