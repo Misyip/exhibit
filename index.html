@@ -366,34 +366,36 @@
         function handleOrientation(event) {
             if (!gyroEnabled || !camera) return;
 
-            const alpha = event.alpha; // Compass direction (0 to 360)
-            const beta = event.beta;   // Front-to-back tilt (-180 to 180)
+            const alpha = event.alpha ? BABYLON.Tools.ToRadians(event.alpha) : 0;
+            const beta = event.beta ? BABYLON.Tools.ToRadians(event.beta) : 0;
+            const gamma = event.gamma ? BABYLON.Tools.ToRadians(event.gamma) : 0;
 
-            if (alpha === null || beta === null) return;
-
-            if (initialAlpha === null) {
-                initialAlpha = alpha;
+            // Use Babylon's built-in orientation quaternion calculation for device orientation
+            // This natively prevents gimbal lock, spinning, and axis flipping entirely.
+            if (!camera.rotationQuaternion) {
+                camera.rotationQuaternion = camera.rotation.toQuaternion();
             }
 
-            // Inverted deltaAlpha so pivoting left looks left, pivoting right looks right
-            let deltaAlpha = initialAlpha - alpha;
-            if (deltaAlpha > 180) deltaAlpha -= 360;
-            if (deltaAlpha < -180) deltaAlpha += 360;
+            // Create rotation from device orientation angles
+            let rotMatrix = new BABYLON.Matrix();
+            
+            // Standard mobile device orientation mapping
+            BABYLON.Matrix.RotationYawPitchRollToRef(
+                alpha, 
+                beta - Math.PI / 4, // Center baseline tilt
+                -gamma, 
+                rotMatrix
+            );
 
-            targetRotationY = BABYLON.Tools.ToRadians(deltaAlpha);
+            // Convert matrix to a safe quaternion rotation
+            let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
 
-            // Inverted beta mapping so pivoting up looks up, pivoting down looks down
-            let rawBeta = -(beta - 45);
-			let clampedBeta = Math.max(-89, Math.min(75, rawBeta));
-            targetRotationX = BABYLON.Tools.ToRadians(clampedBeta);
-
-			// Dampen horizontal rotation (yaw) when looking up to completely eliminate spinning/flipping
-            let yawDamping = Math.cos(targetRotationX);
-            let safeTargetRotationY = targetRotationY * Math.max(0.15, yawDamping);
-			
-            // Smooth interpolation (lerp) for fluid camera movement
-            camera.rotation.y += (targetRotationY - camera.rotation.y) * 0.15;
-            camera.rotation.x += (targetRotationX - camera.rotation.x) * 0.15;
+            // Smoothly slerp (spherical linear interpolate) to the target orientation
+            camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
+                camera.rotationQuaternion, 
+                targetQuaternion, 
+                0.2
+            );
         }
 
         // UPDATE UI INSTRUCTIONS AND APPLY DEVICE CSS CLASSES
