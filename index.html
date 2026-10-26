@@ -311,8 +311,6 @@
         // GYROSCOPE CONTROL VARIABLES
         let gyroEnabled = false;
         let initialAlpha = null;
-        let targetRotationY = 0;
-        let targetRotationX = 0;
 
         async function toggleGyroscope() {
             const btn = document.getElementById("gyro-toggle-btn");
@@ -338,7 +336,6 @@
                 }
             } catch (err) {
                 console.error("Gyroscope permission error:", err);
-                // Fallback attempt for devices that support events without requestPermission
                 activateGyro();
             }
         }
@@ -352,9 +349,14 @@
                 btn.style.background = "#575757";
             }
 
-           // Completely remove touch pointer rotation so dragging/panning the screen does nothing
+            if (camera) {
+                if (!camera.rotationQuaternion) {
+                    camera.rotationQuaternion = camera.rotation.toQuaternion();
+                }
+            }
+
+            // Completely remove touch pointer rotation so dragging/panning the screen does nothing, while preserving movement
             if (camera && camera.inputs) {
-                camera.inputs.removeByType("ArcRotateCameraPointersInput"); // if any, or remove pointers input
                 if (camera.inputs.attached.pointers) {
                     camera.inputs.remove(camera.inputs.attached.pointers);
                 }
@@ -370,34 +372,22 @@
             const alpha = event.alpha ? -BABYLON.Tools.ToRadians(event.alpha) : 0;
             const beta = event.beta ? BABYLON.Tools.ToRadians(event.beta) : 0;
             // Invert gamma to fix up/down inversion
-            const gamma = event.gamma ? -BABYLON.Tools.ToRadians(event.gamma) : 0;
+            const gamma = event.gamma ? BABYLON.Tools.ToRadians(event.gamma) : 0;
 
             if (!camera.rotationQuaternion) {
                 camera.rotationQuaternion = camera.rotation.toQuaternion();
             }
 
             let rotMatrix = new BABYLON.Matrix();
-            
             BABYLON.Matrix.RotationYawPitchRollToRef(
                 alpha, 
                 beta - Math.PI / 4, 
-                -gamma, // Corrected sign for proper up/down mapping
+                gamma, 
                 rotMatrix
             );
 
             let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
 
-            camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
-                camera.rotationQuaternion, 
-                targetQuaternion, 
-                0.2
-            );
-        }
-
-            // Convert matrix to a safe quaternion rotation
-            let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
-
-            // Smoothly slerp (spherical linear interpolate) to the target orientation
             camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
                 camera.rotationQuaternion, 
                 targetQuaternion, 
@@ -670,6 +660,8 @@
 
             camera = new BABYLON.UniversalCamera("visitorCamera", new BABYLON.Vector3(8, 1.6, -2), scene);
             camera.attachControl(canvas, true);
+            // Initialize rotationQuaternion right away to support quaternion tracking
+            camera.rotationQuaternion = new BABYLON.Quaternion();
             
             camera.fov = maxFov;
             camera.applyGravity = true;
