@@ -386,6 +386,10 @@
             let rawBeta = -(beta - 45);
 			let clampedBeta = Math.max(-15, Math.min(75, rawBeta));
             targetRotationX = BABYLON.Tools.ToRadians(clampedBeta);
+
+			// Dampen horizontal rotation (yaw) when looking up to completely eliminate spinning/flipping
+            let yawDamping = Math.cos(targetRotationX);
+            let safeTargetRotationY = targetRotationY * Math.max(0.15, yawDamping);
 			
             // Smooth interpolation (lerp) for fluid camera movement
             camera.rotation.y += (targetRotationY - camera.rotation.y) * 0.15;
