@@ -396,55 +396,16 @@
             }
         }
 
+        // Store latest raw sensor values globally
+        let latestAlpha = 0;
+        let latestBeta = 0;
+        let sensorReceived = false;
+
         function handleOrientation(event) {
-            if (!gyroEnabled || !camera) return;
-
-            const alpha = event.alpha ? event.alpha : 0;
-            const beta = event.beta ? event.beta : 0;
-
-            // Initialize or capture new baselines upon recentering or startup
-            if (baseAlpha === null || baseBeta === null) {
-                baseAlpha = alpha;
-                baseBeta = beta;
-            }
-
-            // Calculate relative offset angles from the center baseline
-            let deltaAlpha = alpha - baseAlpha;
-            let deltaBeta = beta - baseBeta;
-
-            // Normalize deltaAlpha to stay within -180 to 180 degrees
-            if (deltaAlpha > 180) deltaAlpha -= 360;
-            if (deltaAlpha < -180) deltaAlpha += 360;
-
-			// Set separate degrees cap for looking up vs looking down
-            const maxUpDegrees = 15;   // Limit how far up you can look
-            const maxDownDegrees = 65; // Limit how far down you can look
-            deltaBeta = Math.max(-maxDownDegrees, Math.min(maxUpDegrees, deltaBeta));
-
-            // Map to radians (removed negative sign on beta so pointing down pitches down, pointing up pitches up)
-            const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
-            const radBeta = BABYLON.Tools.ToRadians(deltaBeta);
-
-            if (!camera.rotationQuaternion) {
-                camera.rotationQuaternion = camera.rotation.toQuaternion();
-            }
-
-            let rotMatrix = new BABYLON.Matrix();
-            // Pass 0 for roll (gamma) to completely remove camera roll
-            BABYLON.Matrix.RotationYawPitchRollToRef(
-                radAlpha, 
-                radBeta, 
-                0, 
-                rotMatrix
-            );
-
-            let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
-
-            camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
-                camera.rotationQuaternion, 
-                targetQuaternion, 
-                0.2
-            );
+            if (!gyroEnabled) return;
+            latestAlpha = event.alpha ? event.alpha : 0;
+            latestBeta = event.beta ? event.beta : 0;
+            sensorReceived = true;
         }
 
         // UPDATE UI INSTRUCTIONS AND APPLY DEVICE CSS CLASSES
@@ -1362,6 +1323,41 @@
             scene.onBeforeRenderObservable.add(() => {
                 camera.fov += (targetFov - camera.fov) * 0.15;
 
+				// Sync gyro rotation synchronously with the render loop to eliminate movement jitter
+                if (gyroEnabled && camera && sensorReceived) {
+                    if (baseAlpha === null || baseBeta === null) {
+                        baseAlpha = latestAlpha;
+                        baseBeta = latestBeta;
+                    }
+
+                    let deltaAlpha = latestAlpha - baseAlpha;
+                    let deltaBeta = latestBeta - baseBeta;
+
+                    if (deltaAlpha > 180) deltaAlpha -= 360;
+                    if (deltaAlpha < -180) deltaAlpha += 360;
+
+                    const maxUpDegrees = 65;
+                    const maxDownDegrees = 65;
+                    deltaBeta = Math.max(-maxDownDegrees, Math.min(maxUpDegrees, deltaBeta));
+
+                    const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
+                    const radBeta = BABYLON.Tools.ToRadians(deltaBeta);
+
+                    if (!camera.rotationQuaternion) {
+                        camera.rotationQuaternion = camera.rotation.toQuaternion();
+                    }
+
+                    let rotMatrix = new BABYLON.Matrix();
+                    BABYLON.Matrix.RotationYawPitchRollToRef(radAlpha, radBeta, 0, rotMatrix);
+
+                    let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
+                    camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
+                        camera.rotationQuaternion, 
+                        targetQuaternion, 
+                        0.15
+                    );
+                }
+				
                 if (activeArtwork) {
                     const currentDist = BABYLON.Vector3.Distance(camera.position, activeArtwork.getAbsolutePosition());
                     const exitThreshold = activeArtwork.metadata.triggerDistance + 1.2;
