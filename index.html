@@ -352,13 +352,11 @@
                 btn.style.background = "#575757";
             }
 
-            // Keep control attached, but disable touch rotation pointers so dragging the screen doesn't pan the view
+           // Completely remove touch pointer rotation so dragging/panning the screen does nothing
             if (camera && camera.inputs) {
-                // For Babylon UniversalCamera/TouchCamera inputs:
-                const pointersInput = camera.inputs.attached.pointers;
-                if (pointersInput) {
-                    pointersInput.angularSensibilityX = null; // Disable touch rotation X
-                    pointersInput.angularSensibilityY = null; // Disable touch rotation Y
+                camera.inputs.removeByType("ArcRotateCameraPointersInput"); // if any, or remove pointers input
+                if (camera.inputs.attached.pointers) {
+                    camera.inputs.remove(camera.inputs.attached.pointers);
                 }
             }
 			
