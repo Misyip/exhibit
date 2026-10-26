@@ -370,7 +370,7 @@
             const alpha = event.alpha ? -BABYLON.Tools.ToRadians(event.alpha) : 0;
             const beta = event.beta ? BABYLON.Tools.ToRadians(event.beta) : 0;
             // Invert gamma to fix up/down inversion
-            const gamma = event.gamma ? BABYLON.Tools.ToRadians(event.gamma) : 0;
+            const gamma = event.gamma ? -BABYLON.Tools.ToRadians(event.gamma) : 0;
 
             if (!camera.rotationQuaternion) {
                 camera.rotationQuaternion = camera.rotation.toQuaternion();
@@ -381,7 +381,7 @@
             BABYLON.Matrix.RotationYawPitchRollToRef(
                 alpha, 
                 beta - Math.PI / 4, 
-                gamma, // Corrected sign for proper up/down mapping
+                -gamma, // Corrected sign for proper up/down mapping
                 rotMatrix
             );
 
