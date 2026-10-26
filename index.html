@@ -351,6 +351,17 @@
                 btn.textContent = "✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.";
                 btn.style.background = "#575757";
             }
+
+            // Keep control attached, but disable touch rotation pointers so dragging the screen doesn't pan the view
+            if (camera && camera.inputs) {
+                // For Babylon UniversalCamera/TouchCamera inputs:
+                const pointersInput = camera.inputs.attached.pointers;
+                if (pointersInput) {
+                    pointersInput.angularSensibilityX = 0; // Disable touch rotation X
+                    pointersInput.angularSensibilityY = 0; // Disable touch rotation Y
+                }
+            }
+			
             window.addEventListener("deviceorientation", handleOrientation, true);
         }
 
