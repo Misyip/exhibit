@@ -386,12 +386,8 @@
 
             // Inverted beta mapping so pivoting up looks up, pivoting down looks down
             let rawBeta = -(beta - 45);
-			let clampedBeta = Math.max(-60, Math.min(75, rawBeta));
+			let clampedBeta = Math.max(-15, Math.min(75, rawBeta));
             targetRotationX = BABYLON.Tools.ToRadians(clampedBeta);
-
-            // Dampen horizontal rotation (yaw) when looking up to prevent erratic spinning
-            let yawDamping = Math.cos(targetRotationX);
-            targetRotationY = BABYLON.Tools.ToRadians(deltaAlpha) * Math.max(0.2, yawDamping);
 			
             // Smooth interpolation (lerp) for fluid camera movement
             camera.rotation.y += (targetRotationY - camera.rotation.y) * 0.15;
