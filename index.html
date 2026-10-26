@@ -54,7 +54,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Base UI Layer Styles */
+        /* Base UI Layer Styles - Pure Fade Animation */
         #ui-layer {
             position: absolute;
             top: 20px;
@@ -65,13 +65,11 @@
             z-index: 10;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.15);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-            transform: translateX(0);
+            transition: opacity 0.4s ease;
             opacity: 1;
         }
 
         #ui-layer.hidden {
-            transform: translateX(-120%);
             opacity: 0;
             pointer-events: none;
         }
@@ -94,7 +92,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            transition: background 0.2s;
             pointer-events: auto;
         }
 
@@ -109,14 +107,31 @@
             z-index: 9;
             opacity: 0;
             pointer-events: none;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-            transform: translateX(-20px);
+            transition: opacity 0.4s ease;
         }
 
         #ui-show-btn.visible {
             opacity: 1;
             pointer-events: auto;
-            transform: translateX(0);
+        }
+
+        /* Gyroscope toggle button style */
+        .gyro-btn {
+            background: #ca775f;
+            border: none;
+            color: white;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            font-weight: bold;
+            transition: background 0.2s;
+            pointer-events: auto;
+        }
+        .gyro-btn:hover {
+            background: #b56750;
         }
 
         /* DESKTOP UI-LAYER SIZES (Edit these for Desktop) */
@@ -293,6 +308,69 @@
             return "desktop";
         }
 
+        // GYROSCOPE CONTROL VARIABLES
+        let gyroEnabled = false;
+        let initialAlpha = null;
+        let targetRotationY = 0;
+        let targetRotationX = 0;
+
+        function toggleGyroscope() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                // iOS 13+ permission request
+                DeviceOrientationEvent.requestPermission()
+                    .then(response => {
+                        if (response === 'granted') {
+                            activateGyro();
+                        } else {
+                            alert("Žiroskopa piekļuve tika liegta.");
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Android & standard devices
+                activateGyro();
+            }
+        }
+
+        function activateGyro() {
+            gyroEnabled = true;
+            initialAlpha = null;
+            const btn = document.getElementById("gyro-toggle-btn");
+            if (btn) {
+                btn.textContent = "✓ Žiroskops ieslēgts";
+                btn.style.background = "#575757";
+            }
+            window.addEventListener("deviceorientation", handleOrientation, true);
+        }
+
+        function handleOrientation(event) {
+            if (!gyroEnabled || !camera) return;
+
+            const alpha = event.alpha; // Compass direction (0 to 360)
+            const beta = event.beta;   // Front-to-back tilt (-180 to 180)
+
+            if (alpha === null || beta === null) return;
+
+            if (initialAlpha === null) {
+                initialAlpha = alpha;
+            }
+
+            // Calculate horizontal delta rotation (Yaw)
+            let deltaAlpha = alpha - initialAlpha;
+            if (deltaAlpha > 180) deltaAlpha -= 360;
+            if (deltaAlpha < -180) deltaAlpha += 360;
+
+            targetRotationY = BABYLON.Tools.ToRadians(deltaAlpha);
+
+            // Calculate vertical tilt rotation (Pitch) clamped for comfort
+            let clampedBeta = Math.max(-75, Math.min(75, beta - 45));
+            targetRotationX = BABYLON.Tools.ToRadians(clampedBeta);
+
+            // Smooth interpolation (lerp) for fluid camera movement
+            camera.rotation.y += (targetRotationY - camera.rotation.y) * 0.15;
+            camera.rotation.x += (targetRotationX - camera.rotation.x) * 0.15;
+        }
+
         // UPDATE UI INSTRUCTIONS AND APPLY DEVICE CSS CLASSES
         function updateUIInstructions() {
             const instructionsDiv = document.getElementById("ui-instructions");
@@ -309,8 +387,9 @@
                 instructionsDiv.innerHTML = `
                     <p><strong>Velciet ar pirkstu pa kreisi vai pa labi</strong>, lai skatītos apkārt.</p>
                     <p><strong>Velciet ar pirkstu uz augšu vai uz leju</strong>, lai pārvietotos.</p>
-					<p><strong>Velkot ar diviem pirkstiem pa ekrānu</strong> variet skatīties uz visām pusēm.</p>
-                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
+					<p><strong>Velkot ar diviem pirkstiem pa ekrānu</strong> varat skatīties uz visām pusēm.</p>
+                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildu informāciju.</p>
+                    <button id="gyro-toggle-btn" class="gyro-btn" onclick="toggleGyroscope()">Ieslēgt žiroskopu (kameras grozīšanai)</button>
                 `;
             } else {
                 uiLayer.classList.add("desktop-ui");
@@ -322,7 +401,7 @@
                     <p><strong>Spiežot un turot peles klikšķi</strong> var skatīties apkārt.</p>
                     <p><strong>W, A, S, D</strong> vai <strong>bultas</strong>, lai staigātu.</p>
                     <p><strong>Izmantojot peles ritenīti</strong> var pietuvināt kameru.</p>
-                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
+                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildu informāciju.</p>
                 `;
             }
         }
@@ -875,6 +954,7 @@
             const matMaterial = new BABYLON.StandardMaterial("matMaterial", scene);
             matMaterial.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
             entranceMat.material = matMaterial;
+			matMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
             // STAIRCASE
             const createStaircase = () => {
@@ -884,7 +964,7 @@
 
                 const stairMat = new BABYLON.StandardMaterial("stairMat", scene);
                 stairMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor);
-				stairMat.specularColor = new BABYLON.Color3(0, 0, 0);
+				stairMat.specularColor = new BABYLON.Color3(0, 0, 0);				
 
                 const totalHeight = 4.5; 
                 const flightLength = 10;
