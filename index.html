@@ -348,7 +348,7 @@
             initialAlpha = null;
             const btn = document.getElementById("gyro-toggle-btn");
             if (btn) {
-                btn.textContent = "✓ Žiroskops ieslēgts";
+                btn.textContent = "✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.";
                 btn.style.background = "#575757";
             }
             window.addEventListener("deviceorientation", handleOrientation, true);
@@ -374,7 +374,8 @@
             targetRotationY = BABYLON.Tools.ToRadians(deltaAlpha);
 
             // Inverted beta mapping so pivoting up looks up, pivoting down looks down
-            let clampedBeta = Math.max(-75, Math.min(75, -(beta - 45)));
+            let rawBeta = -(beta - 45);
+			let clampedBeta = Math.max(-15, Math.min(75, rawBeta));
             targetRotationX = BABYLON.Tools.ToRadians(clampedBeta);
 
             // Smooth interpolation (lerp) for fluid camera movement
