@@ -416,9 +416,9 @@
             if (deltaAlpha > 180) deltaAlpha -= 360;
             if (deltaAlpha < -180) deltaAlpha += 360;
 
-            // Map to radians with correct sign adjustments (roll / gamma is omitted entirely to prevent banking/tilt roll)
+            // Map to radians (removed negative sign on beta so pointing down pitches down, pointing up pitches up)
             const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
-            const radBeta = -BABYLON.Tools.ToRadians(deltaBeta);
+            const radBeta = BABYLON.Tools.ToRadians(deltaBeta);
 
             if (!camera.rotationQuaternion) {
                 camera.rotationQuaternion = camera.rotation.toQuaternion();
@@ -428,7 +428,7 @@
             // Pass 0 for roll (gamma) to completely remove camera roll
             BABYLON.Matrix.RotationYawPitchRollToRef(
                 radAlpha, 
-                radBeta + Math.PI / 4, 
+                radBeta, 
                 0, 
                 rotMatrix
             );
@@ -466,7 +466,7 @@
                 uiLayer.classList.add("desktop-ui");
                 uiLayer.classList.remove("mobile-ui");
                 infoModal.classList.add("desktop-ui");
-                infoModal.classList.remove("desktop-ui");
+                infoModal.classList.remove("mobile-ui");
 
                 instructionsDiv.innerHTML = `
                     <p><strong>Spiežot un turot peles klikšķi</strong> var skatīties apkārt.</p>
@@ -1346,6 +1346,7 @@
                 });
             };
 
+            // Set initial camera target looking straight ahead toward the North wall (positive Z direction)
             camera.setTarget(new BABYLON.Vector3(camera.position.x, camera.position.y, camera.position.z + 10));
 
             const isMeshInView = (mesh) => {
