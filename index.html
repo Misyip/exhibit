@@ -366,26 +366,33 @@
         function handleOrientation(event) {
             if (!gyroEnabled || !camera) return;
 
-            const alpha = event.alpha ? BABYLON.Tools.ToRadians(event.alpha) : 0;
+            // Invert alpha (yaw/compass) and gamma (roll/side tilt) to fix left/right inversion
+            const alpha = event.alpha ? -BABYLON.Tools.ToRadians(event.alpha) : 0;
             const beta = event.beta ? BABYLON.Tools.ToRadians(event.beta) : 0;
+            // Invert gamma to fix up/down inversion
             const gamma = event.gamma ? BABYLON.Tools.ToRadians(event.gamma) : 0;
 
-            // Use Babylon's built-in orientation quaternion calculation for device orientation
-            // This natively prevents gimbal lock, spinning, and axis flipping entirely.
             if (!camera.rotationQuaternion) {
                 camera.rotationQuaternion = camera.rotation.toQuaternion();
             }
 
-            // Create rotation from device orientation angles
             let rotMatrix = new BABYLON.Matrix();
             
-            // Standard mobile device orientation mapping
             BABYLON.Matrix.RotationYawPitchRollToRef(
                 alpha, 
-                beta - Math.PI / 4, // Center baseline tilt
-                -gamma, 
+                beta - Math.PI / 4, 
+                gamma, // Corrected sign for proper up/down mapping
                 rotMatrix
             );
+
+            let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
+
+            camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
+                camera.rotationQuaternion, 
+                targetQuaternion, 
+                0.2
+            );
+        }
 
             // Convert matrix to a safe quaternion rotation
             let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
