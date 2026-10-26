@@ -417,8 +417,8 @@
             if (deltaAlpha < -180) deltaAlpha += 360;
 
 			// Set separate degrees cap for looking up vs looking down
-            const maxUpDegrees = 65;   // Limit how far up you can look
-            const maxDownDegrees = 15; // Limit how far down you can look
+            const maxUpDegrees = 15;   // Limit how far up you can look
+            const maxDownDegrees = 65; // Limit how far down you can look
             deltaBeta = Math.max(-maxDownDegrees, Math.min(maxUpDegrees, deltaBeta));
 
             // Map to radians (removed negative sign on beta so pointing down pitches down, pointing up pitches up)
