@@ -384,7 +384,7 @@
 
             // Inverted beta mapping so pivoting up looks up, pivoting down looks down
             let rawBeta = -(beta - 45);
-			let clampedBeta = Math.max(-60, Math.min(75, rawBeta));
+			let clampedBeta = Math.max(-89, Math.min(75, rawBeta));
             targetRotationX = BABYLON.Tools.ToRadians(clampedBeta);
 
 			// Dampen horizontal rotation (yaw) when looking up to completely eliminate spinning/flipping
