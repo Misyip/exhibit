@@ -314,20 +314,31 @@
         let targetRotationY = 0;
         let targetRotationX = 0;
 
-        function toggleGyroscope() {
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                // iOS 13+ permission request
-                DeviceOrientationEvent.requestPermission()
-                    .then(response => {
-                        if (response === 'granted') {
-                            activateGyro();
-                        } else {
-                            alert("Žiroskopa piekļuve tika liegta.");
-                        }
-                    })
-                    .catch(console.error);
-            } else {
-                // Android & standard devices
+        async function toggleGyroscope() {
+            const btn = document.getElementById("gyro-toggle-btn");
+
+            // Check if running on secure context (HTTPS), required for device sensors
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                alert("Brīdinājums: Žiroskops prasa drošu HTTPS savienojumu (vai localhost).");
+                return;
+            }
+
+            try {
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    // iOS 13+ explicit permission request
+                    const response = await DeviceOrientationEvent.requestPermission();
+                    if (response === 'granted') {
+                        activateGyro();
+                    } else {
+                        alert("Žiroskopa piekļuve tika liegta. Ja nospiedāt 'Liegt', lūdzu, pārbaudiet Safari iestatījumus (Safari -> Atļaut piekļuvi kustības sensoriem).");
+                    }
+                } else {
+                    // Standard devices (Android, Chrome, Firefox)
+                    activateGyro();
+                }
+            } catch (err) {
+                console.error("Gyroscope permission error:", err);
+                // Fallback attempt for devices that support events without requestPermission
                 activateGyro();
             }
         }
