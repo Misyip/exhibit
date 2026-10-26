@@ -366,15 +366,15 @@
                 initialAlpha = alpha;
             }
 
-            // Calculate horizontal delta rotation (Yaw)
-            let deltaAlpha = alpha - initialAlpha;
+            // Inverted deltaAlpha so pivoting left looks left, pivoting right looks right
+            let deltaAlpha = initialAlpha - alpha;
             if (deltaAlpha > 180) deltaAlpha -= 360;
             if (deltaAlpha < -180) deltaAlpha += 360;
 
             targetRotationY = BABYLON.Tools.ToRadians(deltaAlpha);
 
-            // Calculate vertical tilt rotation (Pitch) clamped for comfort
-            let clampedBeta = Math.max(-75, Math.min(75, beta - 45));
+            // Inverted beta mapping so pivoting up looks up, pivoting down looks down
+            let clampedBeta = Math.max(-75, Math.min(75, -(beta - 45)));
             targetRotationX = BABYLON.Tools.ToRadians(clampedBeta);
 
             // Smooth interpolation (lerp) for fluid camera movement
