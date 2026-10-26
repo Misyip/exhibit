@@ -418,7 +418,7 @@
 
             // Map to radians with correct sign adjustments (roll / gamma is omitted entirely to prevent banking/tilt roll)
             const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
-            const radBeta = BABYLON.Tools.ToRadians(deltaBeta);
+            const radBeta = -BABYLON.Tools.ToRadians(deltaBeta);
 
             if (!camera.rotationQuaternion) {
                 camera.rotationQuaternion = camera.rotation.toQuaternion();
