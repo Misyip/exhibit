@@ -357,8 +357,6 @@
             baseAlpha = null; // Will be captured on the first sensor frame
             baseBeta = null;
 
-			updateUIinstructions();
-
             const btn = document.getElementById("gyro-toggle-btn");
             if (btn) {
                 btn.textContent = "✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.";
@@ -379,6 +377,8 @@
             }
 			
             window.addEventListener("deviceorientation", handleOrientation, true);
+
+			setTimeout(updateUIInstructions, 50);
         }
 
         function recenterGyro() {
