@@ -316,8 +316,6 @@
         let baseBeta = null;
 
         async function toggleGyroscope() {
-            const btn = document.getElementById("gyro-toggle-btn");
-
             // Check if running on secure context (HTTPS), required for device sensors
             if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
                 alert("Brīdinājums: Žiroskops prasa drošu HTTPS savienojumu (vai localhost).");
@@ -357,13 +355,7 @@
             baseAlpha = null; // Will be captured on the first sensor frame
             baseBeta = null;
 
-            const btn = document.getElementById("gyro-toggle-btn");
-            if (btn) {
-                btn.textContent = "✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.";
-                btn.style.background = "#575757";
-            }
-
-			if (typeof camera !== 'undefined' && camera) {
+            if (typeof camera !== 'undefined' && camera) {
                 if (!camera.rotationQuaternion) {
                     camera.rotationQuaternion = camera.rotation.toQuaternion();
                 }
@@ -373,8 +365,11 @@
                     camera.inputs.remove(camera.inputs.attached.pointers);
                 }
             }
-			
+            
             window.addEventListener("deviceorientation", handleOrientation, true);
+
+            // Defer UI update so button click event finishes executing before DOM replacement
+            setTimeout(updateUIInstructions, 50);
         }
 
         function recenterGyro() {
@@ -384,7 +379,6 @@
             
             const btn = document.getElementById("gyro-toggle-btn");
             if (btn) {
-                const originalText = btn.textContent;
                 btn.textContent = "✓ Skats nocentrēts!";
                 setTimeout(() => {
                     if (gyroEnabled) {
@@ -419,7 +413,7 @@
                 infoModal.classList.add("mobile-ui");
                 infoModal.classList.remove("desktop-ui");
 
-				if (!gyroEnabled) {
+                if (!gyroEnabled) {
                     instructionsDiv.innerHTML = `
                         <p><strong>Velciet ar pirkstu pa kreisi vai pa labi</strong>, lai skatītos apkārt.</p>
                         <p><strong>Velciet ar pirkstu uz augšu vai uz leju</strong>, lai pārvietotos.</p>
@@ -439,7 +433,7 @@
                 uiLayer.classList.add("desktop-ui");
                 uiLayer.classList.remove("mobile-ui");
                 infoModal.classList.add("desktop-ui");
-                infoModal.classList.remove("mobile-ui");
+                infoModal.classList.remove("desktop-ui");
 
                 instructionsDiv.innerHTML = `
                     <p><strong>Spiežot un turot peles klikšķi</strong> var skatīties apkārt.</p>
@@ -1348,18 +1342,17 @@
                     deltaBeta = Math.max(-maxDownDegrees, Math.min(maxUpDegrees, deltaBeta));
 
                     const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
-                    const radBeta = -BABYLON.Tools.ToRadians(deltaBeta);
+                    const radBeta = BABYLON.Tools.ToRadians(deltaBeta);
 
                     if (!camera.rotationQuaternion) {
                         camera.rotationQuaternion = camera.rotation.toQuaternion();
                     }
 
-					// Build clean separate axis rotations and multiply them to avoid Euler gimbal lock
+					// Build clean separate axis rotations and multiply them to avoid Euler gimbal lock / 360 flips
                     let qYaw = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.Y, radAlpha);
                     let qPitch = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.X, radBeta);
                     let targetQuaternion = qYaw.multiply(qPitch);
 
-                    let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
                     camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
                         camera.rotationQuaternion, 
                         targetQuaternion, 
