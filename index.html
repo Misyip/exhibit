@@ -168,7 +168,7 @@
             color: #ddd;
         }
 
-        /* Base Info Modal Panel Styles */
+/* Base Info Modal Panel Styles */
         #info-modal {
             position: absolute;
             bottom: 30px;
@@ -185,35 +185,34 @@
             opacity: 0;
             pointer-events: none;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            width: 95%;
+            max-width: 650px;
+            padding: 28px 32px;
         }
         #info-modal.active {
             transform: translate(-50%, 0);
             opacity: 1;
         }
 
-        /* DESKTOP INFO MODAL SIZES (Edit these for Desktop) */
-        #info-modal.desktop-ui {
-            width: 80%;
-            max-width: 500px;
-            padding: 18px 22px;
-        }
-        #info-modal.desktop-ui h3 {
+        /* INFO MODAL TEXT STYLES (Unified Mobile & Desktop Styling) */
+        #info-modal h3 {
             margin-top: 0;
             color: #ca775f;
-            font-size: 1.3rem;
-            margin-bottom: 4px;
+            font-size: 1.65rem;
+            margin-bottom: 6px;
+            line-height: 1.3;
         }
-        #info-modal.desktop-ui h4 {
-            margin: 0 0 10px 0;
+        #info-modal h4 {
+            margin: 0 0 14px 0;
             color: #bbb;
             font-weight: normal;
-            font-size: 0.95rem;
+            font-size: 1.15rem;
             font-style: italic;
         }
-        #info-modal.desktop-ui p {
-            line-height: 1.5;
+        #info-modal p {
+            line-height: 1.6;
             color: #eee;
-            font-size: 0.95rem;
+            font-size: 1.15rem;
             margin-bottom: 0;
         }
 
