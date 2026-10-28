@@ -1342,7 +1342,7 @@
                     deltaBeta = Math.max(-maxDownDegrees, Math.min(maxUpDegrees, deltaBeta));
 
                     const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
-                    const radBeta = -BABYLON.Tools.ToRadians(deltaBeta);
+                    const radBeta = BABYLON.Tools.ToRadians(deltaBeta);
 
                     if (!camera.rotationQuaternion) {
                         camera.rotationQuaternion = camera.rotation.toQuaternion();
@@ -1356,7 +1356,7 @@
                     camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
                         camera.rotationQuaternion, 
                         targetQuaternion, 
-                        0.20
+                        0.10
                     );
                 }
 				
