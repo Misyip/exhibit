@@ -1332,13 +1332,13 @@
                     }
 
                     let deltaAlpha = latestAlpha - baseAlpha;
-                    let deltaBeta = latestBeta - baseBeta;
+                    let deltaBeta = -(latestBeta - baseBeta);
 
                     if (deltaAlpha > 180) deltaAlpha -= 360;
                     if (deltaAlpha < -180) deltaAlpha += 360;
 
                     const maxUpDegrees = 65;
-                    const maxDownDegrees = 65;
+                    const maxDownDegrees = 15;
                     deltaBeta = Math.max(-maxDownDegrees, Math.min(maxUpDegrees, deltaBeta));
 
                     const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
