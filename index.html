@@ -1345,12 +1345,12 @@
                     if (deltaAlpha > 180) deltaAlpha -= 360;
                     if (deltaAlpha < -180) deltaAlpha += 360;
 
-                    const maxUpDegrees = 15;
-                    const maxDownDegrees = 65;
+                    const maxUpDegrees = 65;
+                    const maxDownDegrees = 15;
                     deltaBeta = Math.max(-maxDownDegrees, Math.min(maxUpDegrees, deltaBeta));
 
                     const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
-                    const radBeta = BABYLON.Tools.ToRadians(deltaBeta);
+                    const radBeta = -BABYLON.Tools.ToRadians(deltaBeta);
 
                     if (!camera.rotationQuaternion) {
                         camera.rotationQuaternion = camera.rotation.toQuaternion();
