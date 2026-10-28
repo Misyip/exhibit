@@ -1346,7 +1346,7 @@
                     if (deltaAlpha < -180) deltaAlpha += 360;
 
                     const maxUpDegrees = 65;
-                    const maxDownDegrees = 15;
+                    const maxDownDegrees = 65;
                     deltaBeta = Math.max(-maxDownDegrees, Math.min(maxUpDegrees, deltaBeta));
 
                     const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
@@ -1356,8 +1356,10 @@
                         camera.rotationQuaternion = camera.rotation.toQuaternion();
                     }
 
-                    let rotMatrix = new BABYLON.Matrix();
-                    BABYLON.Matrix.RotationYawPitchRollToRef(radAlpha, radBeta, 0, rotMatrix);
+					// Build clean separate axis rotations and multiply them to avoid Euler gimbal lock
+                    let qYaw = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.Y, radAlpha);
+                    let qPitch = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.X, radBeta);
+                    let targetQuaternion = qYaw.multiply(qPitch);
 
                     let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
                     camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
