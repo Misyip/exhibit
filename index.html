@@ -363,15 +363,13 @@
                 btn.style.background = "#575757";
             }
 
-            if (camera) {
+			if (typeof camera !== 'undefined' && camera) {
                 if (!camera.rotationQuaternion) {
                     camera.rotationQuaternion = camera.rotation.toQuaternion();
                 }
-            }
 
-            // Remove touch pointer rotation so dragging/panning does nothing, while preserving movement
-            if (camera && camera.inputs) {
-                if (camera.inputs.attached.pointers) {
+                // Remove touch pointer rotation so dragging/panning does nothing, while preserving movement
+                if (camera.inputs && camera.inputs.attached.pointers) {
                     camera.inputs.remove(camera.inputs.attached.pointers);
                 }
             }
