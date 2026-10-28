@@ -357,6 +357,8 @@
             baseAlpha = null; // Will be captured on the first sensor frame
             baseBeta = null;
 
+			updateUIinstructions();
+
             const btn = document.getElementById("gyro-toggle-btn");
             if (btn) {
                 btn.textContent = "✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.";
@@ -421,13 +423,22 @@
                 infoModal.classList.add("mobile-ui");
                 infoModal.classList.remove("desktop-ui");
 
-                instructionsDiv.innerHTML = `
-                    <p><strong>Velciet ar pirkstu pa kreisi vai pa labi</strong>, lai skatītos apkārt.</p>
-                    <p><strong>Velciet ar pirkstu uz augšu vai uz leju</strong>, lai pārvietotos.</p>
-					<p><strong>Velkot ar diviem pirkstiem pa ekrānu</strong> varat skatīties uz visām pusēm.</p>
-                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildu informāciju.</p>
-                    <button id="gyro-toggle-btn" class="gyro-btn" onclick="toggleGyroscope()">Ieslēgt žiroskopu (kameras grozīšanai)</button>
-                `;
+				if (!gyroEnabled) {
+                    instructionsDiv.innerHTML = `
+                        <p><strong>Velciet ar pirkstu pa kreisi vai pa labi</strong>, lai skatītos apkārt.</p>
+                        <p><strong>Velciet ar pirkstu uz augšu vai uz leju</strong>, lai pārvietotos.</p>
+                        <p><strong>Velkot ar diviem pirkstiem pa ekrānu</strong> varat skatīties uz visām pusēm.</p>
+                        <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
+                        <button id="gyro-toggle-btn" class="gyro-btn" onclick="toggleGyroscope()">Ieslēgt žiroskopu (kameras grozīšanai)</button>
+                    `;
+                } else {
+                    instructionsDiv.innerHTML = `
+                        <p><strong>Groziet tālruni</strong>, lai skatītos apkārt izstādē.</p>
+                        <p><strong>Velciet ar pirkstu uz augšu vai uz leju</strong>, lai pārvietotos.</p>
+                        <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
+                        <button id="gyro-toggle-btn" class="gyro-btn" style="background: #575757;" onclick="toggleGyroscope()">✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.</button>
+                    `;
+                }
             } else {
                 uiLayer.classList.add("desktop-ui");
                 uiLayer.classList.remove("mobile-ui");
@@ -438,7 +449,7 @@
                     <p><strong>Spiežot un turot peles klikšķi</strong> var skatīties apkārt.</p>
                     <p><strong>W, A, S, D</strong> vai <strong>bultas</strong>, lai staigātu.</p>
                     <p><strong>Izmantojot peles ritenīti</strong> var pietuvināt kameru.</p>
-                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildu informāciju.</p>
+                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
                 `;
             }
         }
