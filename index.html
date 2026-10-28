@@ -54,7 +54,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Base UI Layer Styles */
+        /* Base UI Layer Styles - Pure Fade Animation */
         #ui-layer {
             position: absolute;
             top: 20px;
@@ -65,13 +65,11 @@
             z-index: 10;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.15);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-            transform: translateX(0);
+            transition: opacity 0.4s ease;
             opacity: 1;
         }
 
         #ui-layer.hidden {
-            transform: translateX(-120%);
             opacity: 0;
             pointer-events: none;
         }
@@ -94,7 +92,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            transition: background 0.2s;
             pointer-events: auto;
         }
 
@@ -109,14 +107,31 @@
             z-index: 9;
             opacity: 0;
             pointer-events: none;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-            transform: translateX(-20px);
+            transition: opacity 0.4s ease;
         }
 
         #ui-show-btn.visible {
             opacity: 1;
             pointer-events: auto;
-            transform: translateX(0);
+        }
+
+        /* Gyroscope toggle button style */
+        .gyro-btn {
+            background: #ca775f;
+            border: none;
+            color: white;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            font-weight: bold;
+            transition: background 0.2s;
+            pointer-events: auto;
+        }
+        .gyro-btn:hover {
+            background: #b56750;
         }
 
         /* DESKTOP UI-LAYER SIZES (Edit these for Desktop) */
@@ -293,6 +308,106 @@
             return "desktop";
         }
 
+        // GYROSCOPE CONTROL VARIABLES
+        let gyroEnabled = false;
+        
+        // Offset variables for recentering
+        let baseAlpha = null;
+        let baseBeta = null;
+
+        async function toggleGyroscope() {
+            const btn = document.getElementById("gyro-toggle-btn");
+
+            // Check if running on secure context (HTTPS), required for device sensors
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                alert("Brīdinājums: Žiroskops prasa drošu HTTPS savienojumu (vai localhost).");
+                return;
+            }
+
+            try {
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    // iOS 13+ explicit permission request
+                    const response = await DeviceOrientationEvent.requestPermission();
+                    if (response === 'granted') {
+                        handleGyroToggleAction();
+                    } else {
+                        alert("Žiroskopa piekļuve tika liegta. Ja nospiedāt 'Liegt', lūdzu, pārbaudiet Safari iestatījumus (Safari -> Atļaut piekļuvi kustības sensoriem).");
+                    }
+                } else {
+                    // Standard devices (Android, Chrome, Firefox)
+                    handleGyroToggleAction();
+                }
+            } catch (err) {
+                console.error("Gyroscope permission error:", err);
+                handleGyroToggleAction();
+            }
+        }
+
+        function handleGyroToggleAction() {
+            if (!gyroEnabled) {
+                activateGyro();
+            } else {
+                // If already enabled, pressing it again recenters the view instead of turning it off
+                recenterGyro();
+            }
+        }
+
+        function activateGyro() {
+            gyroEnabled = true;
+            baseAlpha = null; // Will be captured on the first sensor frame
+            baseBeta = null;
+
+            const btn = document.getElementById("gyro-toggle-btn");
+            if (btn) {
+                btn.textContent = "✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.";
+                btn.style.background = "#575757";
+            }
+
+            if (camera) {
+                if (!camera.rotationQuaternion) {
+                    camera.rotationQuaternion = camera.rotation.toQuaternion();
+                }
+            }
+
+            // Remove touch pointer rotation so dragging/panning does nothing, while preserving movement
+            if (camera && camera.inputs) {
+                if (camera.inputs.attached.pointers) {
+                    camera.inputs.remove(camera.inputs.attached.pointers);
+                }
+            }
+			
+            window.addEventListener("deviceorientation", handleOrientation, true);
+        }
+
+        function recenterGyro() {
+            // Reset base orientation triggers to current live sensor values on next event frame
+            baseAlpha = null;
+            baseBeta = null;
+            
+            const btn = document.getElementById("gyro-toggle-btn");
+            if (btn) {
+                const originalText = btn.textContent;
+                btn.textContent = "✓ Skats nocentrēts!";
+                setTimeout(() => {
+                    if (gyroEnabled) {
+                        btn.textContent = "✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.";
+                    }
+                }, 1000);
+            }
+        }
+
+        // Store latest raw sensor values globally
+        let latestAlpha = 0;
+        let latestBeta = 0;
+        let sensorReceived = false;
+
+        function handleOrientation(event) {
+            if (!gyroEnabled) return;
+            latestAlpha = event.alpha ? event.alpha : 0;
+            latestBeta = event.beta ? event.beta : 0;
+            sensorReceived = true;
+        }
+
         // UPDATE UI INSTRUCTIONS AND APPLY DEVICE CSS CLASSES
         function updateUIInstructions() {
             const instructionsDiv = document.getElementById("ui-instructions");
@@ -306,12 +421,22 @@
                 infoModal.classList.add("mobile-ui");
                 infoModal.classList.remove("desktop-ui");
 
-                instructionsDiv.innerHTML = `
-                    <p><strong>Velciet ar pirkstu pa kreisi vai pa labi</strong>, lai skatītos apkārt.</p>
-                    <p><strong>Velciet ar pirkstu uz augšu vai uz leju</strong>, lai pārvietotos.</p>
-					<p><strong>Velkot ar diviem pirkstiem pa ekrānu</strong> variet skatīties uz visām pusēm.</p>
-                    <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
-                `;
+				if (!gyroEnabled) {
+                    instructionsDiv.innerHTML = `
+                        <p><strong>Velciet ar pirkstu pa kreisi vai pa labi</strong>, lai skatītos apkārt.</p>
+                        <p><strong>Velciet ar pirkstu uz augšu vai uz leju</strong>, lai pārvietotos.</p>
+                        <p><strong>Velkot ar diviem pirkstiem pa ekrānu</strong> varat skatīties uz visām pusēm.</p>
+                        <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
+                        <button id="gyro-toggle-btn" class="gyro-btn" onclick="toggleGyroscope()">Ieslēgt žiroskopu (kameras grozīšanai)</button>
+                    `;
+                } else {
+                    instructionsDiv.innerHTML = `
+                        <p><strong>Groziet tālruni</strong>, lai skatītos apkārt izstādē.</p>
+                        <p><strong>Velciet ar pirkstu uz augšu vai uz leju</strong>, lai pārvietotos.</p>
+                        <p>Pieejot klāt pie mākslas darba, redzēsiet papildus informāciju.</p>
+                        <button id="gyro-toggle-btn" class="gyro-btn" style="background: #575757;" onclick="toggleGyroscope()">✓ Žiroskops ieslēgts, lai nocentrētu skatu nospied atkal.</button>
+                    `;
+                }
             } else {
                 uiLayer.classList.add("desktop-ui");
                 uiLayer.classList.remove("mobile-ui");
@@ -557,6 +682,8 @@
 
             camera = new BABYLON.UniversalCamera("visitorCamera", new BABYLON.Vector3(8, 1.6, -2), scene);
             camera.attachControl(canvas, true);
+            // Initialize rotationQuaternion right away to support quaternion tracking
+            camera.rotationQuaternion = new BABYLON.Quaternion();
             
             camera.fov = maxFov;
             camera.applyGravity = true;
@@ -875,6 +1002,7 @@
             const matMaterial = new BABYLON.StandardMaterial("matMaterial", scene);
             matMaterial.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
             entranceMat.material = matMaterial;
+			matMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
             // STAIRCASE
             const createStaircase = () => {
@@ -884,7 +1012,7 @@
 
                 const stairMat = new BABYLON.StandardMaterial("stairMat", scene);
                 stairMat.diffuseColor = BABYLON.Color3.FromHexString(roomConfig.colors.floor);
-				stairMat.specularColor = new BABYLON.Color3(0, 0, 0);
+				stairMat.specularColor = new BABYLON.Color3(0, 0, 0);				
 
                 const totalHeight = 4.5; 
                 const flightLength = 10;
@@ -1193,6 +1321,7 @@
                 });
             };
 
+            // Set initial camera target looking straight ahead toward the North wall (positive Z direction)
             camera.setTarget(new BABYLON.Vector3(camera.position.x, camera.position.y, camera.position.z + 10));
 
             const isMeshInView = (mesh) => {
@@ -1203,6 +1332,43 @@
             scene.onBeforeRenderObservable.add(() => {
                 camera.fov += (targetFov - camera.fov) * 0.15;
 
+				// Sync gyro rotation synchronously with the render loop to eliminate movement jitter
+                if (gyroEnabled && camera && sensorReceived) {
+                    if (baseAlpha === null || baseBeta === null) {
+                        baseAlpha = latestAlpha;
+                        baseBeta = latestBeta;
+                    }
+
+                    let deltaAlpha = latestAlpha - baseAlpha;
+                    let deltaBeta = latestBeta - baseBeta;
+
+                    if (deltaAlpha > 180) deltaAlpha -= 360;
+                    if (deltaAlpha < -180) deltaAlpha += 360;
+
+                    const maxUpDegrees = 65;
+                    const maxDownDegrees = 65;
+                    deltaBeta = Math.max(-maxDownDegrees, Math.min(maxUpDegrees, deltaBeta));
+
+                    const radAlpha = -BABYLON.Tools.ToRadians(deltaAlpha);
+                    const radBeta = -BABYLON.Tools.ToRadians(deltaBeta);
+
+                    if (!camera.rotationQuaternion) {
+                        camera.rotationQuaternion = camera.rotation.toQuaternion();
+                    }
+
+					// Build clean separate axis rotations and multiply them to avoid Euler gimbal lock
+                    let qYaw = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.Y, radAlpha);
+                    let qPitch = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.X, radBeta);
+                    let targetQuaternion = qYaw.multiply(qPitch);
+
+                    let targetQuaternion = BABYLON.Quaternion.FromRotationMatrix(rotMatrix);
+                    camera.rotationQuaternion = BABYLON.Quaternion.Slerp(
+                        camera.rotationQuaternion, 
+                        targetQuaternion, 
+                        0.15
+                    );
+                }
+				
                 if (activeArtwork) {
                     const currentDist = BABYLON.Vector3.Distance(camera.position, activeArtwork.getAbsolutePosition());
                     const exitThreshold = activeArtwork.metadata.triggerDistance + 1.2;
