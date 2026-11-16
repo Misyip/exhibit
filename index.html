@@ -436,7 +436,7 @@
         const loadArtworksFromDatabase = async (scene) => {
             const loadingStatus = document.getElementById("loading-status");
             try {
-                const url = 'https://raw.githubusercontent.com/Misyip/exhibit/refs/heads/main/Gleznas.json';
+                const url = './Gleznas.json';
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
